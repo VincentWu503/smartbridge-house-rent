@@ -10,11 +10,12 @@ const images = [p1, p2, p3, p4];
 
 const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
 
     const handleLogOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    window.location.reload();
   };
 
   useEffect(() => {
