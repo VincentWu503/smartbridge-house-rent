@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const connectDB = () => {
+const connectDB = async () => {
   mongoose
     .connect(process.env.MONGO_DB)
     .then(() => {
