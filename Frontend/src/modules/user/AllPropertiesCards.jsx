@@ -142,13 +142,13 @@ const AllPropertiesCards = ({ loggedIn }) => {
                 {loggedIn && (
                   <>
                     <p className="mt-2 text-sm">
-                      <b>Owner:</b> {property.ownerContact}
+                      <b>Phone Number:</b> {property.ownerContact}
                     </p>
                     <p className="text-sm">
                       <b>Availability:</b> {property.isAvailable}
                     </p>
                     <p className="text-sm">
-                      <b>Price:</b> ₹{property.propertyAmt}
+                      <b>Price:</b> Rp{property.propertyAmt}
                     </p>
                   </>
                 )}

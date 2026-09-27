@@ -39,7 +39,7 @@ const OwnerAllBookings = () => {
   const handleStatus = async (bookingId, propertyId, status) => {
     try {
       const res = await axios.post(
-        `/api/owner/handlebookingstatus`,
+        `${import.meta.env.VITE_API_URL}/api/owner/handlebookingstatus`,
         { bookingId, propertyId, status },
         { withCredentials: true }
       );
