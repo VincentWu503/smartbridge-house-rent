@@ -42,7 +42,7 @@ const Home = () => {
       {/* Navbar */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-black/30 backdrop-blur-lg shadow-md py-4 px-8 flex justify-between items-center">
         <h2 className="text-3xl font-extrabold text-indigo-400 tracking-wide">
-          RentEase
+          ComfyRent
         </h2>
         {       
           !user ? 

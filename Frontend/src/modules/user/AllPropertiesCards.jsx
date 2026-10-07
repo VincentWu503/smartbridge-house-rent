@@ -2,16 +2,47 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Toast from "../common/Toast";
 
+const getStoredFavorites = () => {
+  try {
+    const storedFavorites = localStorage.getItem("favoriteProperties");
+    const parsedFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
+    return Array.isArray(parsedFavorites) ? parsedFavorites.map(String) : [];
+  } catch (error) {
+    console.error("Failed to load favorite properties:", error);
+    return [];
+  }
+};
 
 const AllPropertiesCards = ({ loggedIn }) => {
   const [allProperties, setAllProperties] = useState([]);
   const [filterPropertyType, setPropertyType] = useState("");
   const [filterPropertyAdType, setPropertyAdType] = useState("");
   const [filterPropertyAddress, setPropertyAddress] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState(getStoredFavorites);
   const [showModal, setShowModal] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [userDetails, setUserDetails] = useState({ fullName: "", phone: "" });
   const [toast, setToast] = useState({ show: false, type: "", message: "" });
+
+  const toggleFavorite = (propertyId) => {
+    const propertyIdString = String(propertyId);
+    const updatedFavorites = favoriteIds.includes(propertyIdString)
+      ? favoriteIds.filter((id) => id !== propertyIdString)
+      : [...favoriteIds, propertyIdString];
+
+    try {
+      localStorage.setItem(
+        "favoriteProperties",
+        JSON.stringify(updatedFavorites)
+      );
+      setFavoriteIds(updatedFavorites);
+    } catch (error) {
+      console.error("Failed to save favorite properties:", error);
+    }
+  };
 
   const showToast = (type, message) => {
     setToast({ show: true, type, message });
@@ -74,6 +105,21 @@ const AllPropertiesCards = ({ loggedIn }) => {
         property.propertyType
           .toLowerCase()
           .includes(filterPropertyType.toLowerCase())
+    )
+    .filter((property) => {
+      if (minPrice === "" && maxPrice === "") return true;
+
+      const price = Number(property.propertyAmt);
+      if (!Number.isFinite(price)) return false;
+
+      return (
+        (minPrice === "" || price >= Number(minPrice)) &&
+        (maxPrice === "" || price <= Number(maxPrice))
+      );
+    })
+    .filter(
+      (property) =>
+        !showFavoritesOnly || favoriteIds.includes(String(property._id))
     );
 
   const openModal = (property) => {
@@ -92,17 +138,19 @@ const AllPropertiesCards = ({ loggedIn }) => {
       )}
 
       {/* Filters */}
-      <div className="flex gap-4 items-center mb-6">
+      <div className="flex flex-wrap gap-4 items-center mb-6">
         <input
           type="text"
           placeholder="Search by Address"
           value={filterPropertyAddress}
           onChange={(e) => setPropertyAddress(e.target.value)}
-          className="bg-gray-800/70 border border-gray-700 p-2 rounded w-1/3 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500"
+          aria-label="Search by address"
+          className="bg-gray-800/70 border border-gray-700 p-2 rounded w-full sm:w-1/3 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500"
         />
         <select
           value={filterPropertyAdType}
           onChange={(e) => setPropertyAdType(e.target.value)}
+          aria-label="Filter by ad type"
           className="bg-gray-800/70 border border-gray-700 p-2 rounded text-white focus:ring-2 focus:ring-indigo-500"
         >
           <option value="">All Ad Types</option>
@@ -112,6 +160,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
         <select
           value={filterPropertyType}
           onChange={(e) => setPropertyType(e.target.value)}
+          aria-label="Filter by property type"
           className="bg-gray-800/70 border border-gray-700 p-2 rounded text-white focus:ring-2 focus:ring-indigo-500"
         >
           <option value="">All Types</option>
@@ -119,6 +168,36 @@ const AllPropertiesCards = ({ loggedIn }) => {
           <option value="land/plot">Land/Plot</option>
           <option value="residential">Residential</option>
         </select>
+        <input
+          type="number"
+          min="0"
+          placeholder="Minimum price"
+          value={minPrice}
+          onChange={(e) => setMinPrice(e.target.value)}
+          aria-label="Minimum price"
+          className="bg-gray-800/70 border border-gray-700 p-2 rounded w-full sm:w-40 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500"
+        />
+        <input
+          type="number"
+          min="0"
+          placeholder="Maximum price"
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(e.target.value)}
+          aria-label="Maximum price"
+          className="bg-gray-800/70 border border-gray-700 p-2 rounded w-full sm:w-40 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500"
+        />
+        <button
+          type="button"
+          onClick={() => setShowFavoritesOnly((showing) => !showing)}
+          aria-pressed={showFavoritesOnly}
+          className={`px-4 py-2 rounded transition ${
+            showFavoritesOnly
+              ? "bg-yellow-600 text-white"
+              : "border border-yellow-400 text-yellow-300 hover:bg-yellow-600 hover:text-white"
+          }`}
+        >
+          {showFavoritesOnly ? "Show All Properties" : `Favorites (${favoriteIds.length})`}
+        </button>
       </div>
 
       {/* Property Cards */}
@@ -127,8 +206,25 @@ const AllPropertiesCards = ({ loggedIn }) => {
           filteredProperties.map((property) => (
             <div
               key={property._id}
-              className="bg-gray-800/70 border border-gray-700 rounded-lg shadow-lg hover:shadow-indigo-600/40 transition transform hover:-translate-y-1 overflow-hidden"
+              className="relative bg-gray-800/70 border border-gray-700 rounded-lg shadow-lg hover:shadow-indigo-600/40 transition transform hover:-translate-y-1 overflow-hidden"
             >
+              <button
+                type="button"
+                onClick={() => toggleFavorite(property._id)}
+                aria-label={
+                  favoriteIds.includes(String(property._id))
+                    ? "Remove from favorites"
+                    : "Add to favorites"
+                }
+                aria-pressed={favoriteIds.includes(String(property._id))}
+                className={`absolute top-3 right-3 z-10 aspect-square rounded-full bg-black/70 px-2 py-1 text-2xl leading-none transition ${
+                  favoriteIds.includes(String(property._id))
+                    ? "text-yellow-400"
+                    : "text-white hover:text-yellow-300"
+                }`}
+              >
+                {favoriteIds.includes(String(property._id)) ? "★" : "✰"}
+              </button>
               <img
                 src={`${import.meta.env.VITE_API_URL}${property.propertyImage[0]?.path}`}
                 alt="Property"
@@ -138,6 +234,9 @@ const AllPropertiesCards = ({ loggedIn }) => {
                 <h3 className="font-semibold text-lg text-white">{property.propertyAddress}</h3>
                 <p className="text-gray-400 text-sm">
                   {property.propertyType} - {property.propertyAdType}
+                </p>
+                <p className="mt-2 text-sm">
+                  <b>Price:</b> Rp{property.propertyAmt}
                 </p>
                 {loggedIn && (
                   <>
@@ -172,7 +271,11 @@ const AllPropertiesCards = ({ loggedIn }) => {
             </div>
           ))
         ) : (
-          <p className="text-gray-400">No properties available at the moment.</p>
+          <p className="text-gray-400">
+            {showFavoritesOnly
+              ? "No favorite properties match these filters."
+              : "No properties available at the moment."}
+          </p>
         )}
       </div>
 
