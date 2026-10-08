@@ -27,11 +27,7 @@ const registerController = async (req, res) => {
       const newUser = new userSchema(req.body);
       await newUser.save();
     }
-    ///////////aur you can do this////////
-    //     if (req.body.type === "Owner") {
-    //       newUser.set("granted", "pending", { strict: false });
-    //     }
-    //////////////////// for this, then you need to remove strict keyword from schema//////////////////////
+
     return res.status(201).send({ message: "Register Success", success: true });
   } catch (error) {
     console.log(error);

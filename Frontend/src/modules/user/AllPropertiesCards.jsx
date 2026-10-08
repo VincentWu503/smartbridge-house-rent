@@ -238,18 +238,13 @@ const AllPropertiesCards = ({ loggedIn }) => {
                 <p className="mt-2 text-sm">
                   <b>Price:</b> Rp{property.propertyAmt}
                 </p>
-                {loggedIn && (
-                  <>
-                    <p className="mt-2 text-sm">
-                      <b>Phone Number:</b> {property.ownerContact}
-                    </p>
-                    <p className="text-sm">
-                      <b>Availability:</b> {property.isAvailable}
-                    </p>
-                    <p className="text-sm">
-                      <b>Price:</b> Rp{property.propertyAmt}
-                    </p>
-                  </>
+                <p className="text-sm">
+                  <b>Owner:</b> {property.ownerName}
+                </p>
+                {property.isAvailable === "Available" ? (
+                  <p className="text-center mt-2 text-green-400 text-xs">Available</p>
+                ) : (
+                  <p className="text-center mt-2 text-red-400 text-xs">Not Available</p>
                 )}
                 {property.isAvailable === "Available" ? (
                   loggedIn ? (
@@ -260,12 +255,26 @@ const AllPropertiesCards = ({ loggedIn }) => {
                       Get Info / Book
                     </button>
                   ) : (
-                    <p className="mt-2 text-yellow-400 text-xs">
+                    <button
+                      onClick={() => openModal(property)}
+                      disabled
+                      className="mt-3 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition
+                        disabled:bg-gray-600 disabled:cursor-not-allowed disabled:pointer-events-none
+                      "
+                    >
                       Login to see details
-                    </p>
+                    </button>
                   )
                 ) : (
-                  <p className="mt-2 text-red-400 text-xs">Not Available</p>
+                    <button
+                      onClick={() => openModal(property)}
+                      disabled
+                      className="mt-3 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition
+                        disabled:bg-gray-600 disabled:cursor-not-allowed disabled:pointer-events-none
+                      "
+                    >
+                      Out of Order
+                    </button>
                 )}
               </div>
             </div>
