@@ -4,6 +4,7 @@ import { UserContext } from "../../App";
 import AllUsers from "./AllUsers";
 import AllProperty from "./AllProperty";
 import AllBookings from "./AllBookings";
+import AllReport from "./AllReport";
 
 const AdminHome = () => {
   const user = useContext(UserContext);
@@ -68,6 +69,16 @@ if (!user || !user.userData) return null;
       >
         All Bookings
       </button>
+            <button
+        onClick={() => setActiveTab("report")}
+        className={`pb-2 px-4 text-lg font-medium transition ${
+          activeTab === "report"
+            ? "border-b-2 border-indigo-400 text-indigo-400"
+            : "text-gray-400 hover:text-indigo-300"
+        }`}
+      >
+        All Report
+      </button>
     </div>
 
     {/* Tab Panels */}
@@ -75,6 +86,7 @@ if (!user || !user.userData) return null;
       {activeTab === "users" && <AllUsers />}
       {activeTab === "properties" && <AllProperty />}
       {activeTab === "bookings" && <AllBookings />}
+      {activeTab === "report" && <AllReport/>}
     </div>
   </div>
 </div>

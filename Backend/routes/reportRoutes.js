@@ -14,8 +14,8 @@ const {
 
 const router = express.Router();
 
-router.post("/", optionalAuthMiddleware, createReportController);
 router.get("/", authMiddleware, adminMiddleware, getAllReportsController);
+router.post("/", optionalAuthMiddleware, createReportController);
 router.get("/:reportId", authMiddleware, adminMiddleware, getReportController);
 router.patch(
   "/:reportId",

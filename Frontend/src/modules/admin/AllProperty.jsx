@@ -78,7 +78,7 @@ const AdminAllProperty = () => {
                   {property.ownerContact}
                 </td>
                 <td className="py-2 px-4 border-b border-gray-700 text-center font-semibold text-green-400">
-                  ₹{property.propertyAmt}
+                  Rp{property.propertyAmt}
                 </td>
               </tr>
             ))
