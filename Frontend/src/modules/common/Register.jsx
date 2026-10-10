@@ -1,19 +1,18 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import Toast from "../common/Toast";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Toast from '../common/Toast';
 
 axios.defaults.withCredentials = true;
 
-
 const Register = () => {
   const navigate = useNavigate();
-  const [toast, setToast] = useState({ show: false, type: "", message: "" });
+  const [toast, setToast] = useState({ show: false, type: '', message: '' });
   const [data, setData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    type: "",
+    name: '',
+    email: '',
+    password: '',
+    type: '',
   });
 
   const showToast = (type, message) => {
@@ -29,24 +28,28 @@ const Register = () => {
     e.preventDefault();
 
     if (!data.name || !data.email || !data.password || !data.type) {
-      return showToast("error", "Please fill all fields");
+      return showToast('error', 'Please fill all fields');
     }
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/user/register`,
         data,
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (response.data.success) {
-        showToast("success", response.data.message);
-        setTimeout(() => navigate("/login"), 1000);
+        showToast('success', response.data.message);
+        setTimeout(() => navigate('/login'), 1000);
       } else {
-        showToast("error", response.data.message);
+        showToast('error', response.data.message);
       }
     } catch (error) {
-      showToast("error", error.response?.data?.message || "Registration failed. Please try again.");
+      showToast(
+        'error',
+        error.response?.data?.message ||
+          'Registration failed. Please try again.',
+      );
     }
   };
 
@@ -65,13 +68,22 @@ const Register = () => {
           ComfyRent
         </h2>
         <div className="flex items-center gap-4 text-sm sm:gap-8 sm:text-lg">
-          <Link to="/" className="text-gray-200 hover:text-indigo-400 transition">
+          <Link
+            to="/"
+            className="text-gray-200 hover:text-indigo-400 transition"
+          >
             Home
           </Link>
-          <Link to="/faq" className="text-gray-200 hover:text-indigo-400 transition">
+          <Link
+            to="/faq"
+            className="text-gray-200 hover:text-indigo-400 transition"
+          >
             FAQ
           </Link>
-          <Link to="/login" className="text-gray-200 hover:text-indigo-400 transition">
+          <Link
+            to="/login"
+            className="text-gray-200 hover:text-indigo-400 transition"
+          >
             Login
           </Link>
           <Link
@@ -90,9 +102,7 @@ const Register = () => {
             <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full bg-indigo-500/20 text-indigo-400 text-3xl font-bold shadow-inner">
               📝
             </div>
-            <h1 className="text-2xl font-semibold mt-4 text-white">
-              Sign Up
-            </h1>
+            <h1 className="text-2xl font-semibold mt-4 text-white">Sign Up</h1>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -140,7 +150,7 @@ const Register = () => {
             </button>
 
             <div className="text-center text-red-400 text-sm mt-4">
-              Have an account?{" "}
+              Have an account?{' '}
               <Link to="/login" className="text-indigo-600 hover:underline">
                 Sign In
               </Link>

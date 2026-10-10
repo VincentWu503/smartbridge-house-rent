@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
-import axios from "axios";
-import Toast from "../common/Toast";
+import { useCallback, useEffect, useState } from 'react';
+import axios from 'axios';
+import Toast from '../common/Toast';
 
 const REPORTS_URL = `${import.meta.env.VITE_API_URL}/api/reports`;
 
 const getRequestErrorMessage = (error, fallback) => {
   if (error.response?.status === 404) {
-    return "Reports API not found.";
+    return 'Reports API not found.';
   }
   return error.response?.data?.message || fallback;
 };
@@ -16,7 +16,7 @@ const AllReport = () => {
   const [selectedStatuses, setSelectedStatuses] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [processingId, setProcessingId] = useState(null);
-  const [toast, setToast] = useState({ show: false, type: "", message: "" });
+  const [toast, setToast] = useState({ show: false, type: '', message: '' });
   const showToast = useCallback((type, message) => {
     setToast({ show: true, type, message });
   }, []);
@@ -35,18 +35,21 @@ const AllReport = () => {
         setReports(response.data.data);
         setSelectedStatuses(
           Object.fromEntries(
-            response.data.data.map((report) => [report._id, report.status])
-          )
+            response.data.data.map((report) => [report._id, report.status]),
+          ),
         );
       } else {
-        showToast("error", response.data.message || "Unable to load reports");
+        showToast('error', response.data.message || 'Unable to load reports');
       }
     } catch (error) {
-      console.error("Failed to fetch reports:", error);
+      console.error('Failed to fetch reports:', error);
       if (error.response?.status === 401 || error.response?.status === 403) {
-        showToast("error", "Admin access is required to view reports");
+        showToast('error', 'Admin access is required to view reports');
       } else {
-        showToast("error", getRequestErrorMessage(error, "Failed to fetch reports"));
+        showToast(
+          'error',
+          getRequestErrorMessage(error, 'Failed to fetch reports'),
+        );
       }
     } finally {
       setIsLoading(false);
@@ -71,30 +74,33 @@ const AllReport = () => {
       const response = await axios.patch(
         `${REPORTS_URL}/${reportId}`,
         { status },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (!response.data.success) {
-        showToast("error", response.data.message || "Failed to update status");
+        showToast('error', response.data.message || 'Failed to update status');
         return;
       }
 
       setReports((currentReports) =>
         currentReports.map((report) =>
-          report._id === reportId ? { ...report, status } : report
-        )
+          report._id === reportId ? { ...report, status } : report,
+        ),
       );
-      showToast("success", "Report status updated");
+      showToast('success', 'Report status updated');
     } catch (error) {
-      console.error("Failed to update report status:", error);
-      showToast("error", getRequestErrorMessage(error, "Failed to update status"));
+      console.error('Failed to update report status:', error);
+      showToast(
+        'error',
+        getRequestErrorMessage(error, 'Failed to update status'),
+      );
     } finally {
       setProcessingId(null);
     }
   };
 
   const handleDelete = async (reportId) => {
-    if (!window.confirm("Delete this report? This action cannot be undone.")) {
+    if (!window.confirm('Delete this report? This action cannot be undone.')) {
       return;
     }
 
@@ -105,41 +111,40 @@ const AllReport = () => {
       });
 
       if (!response.data.success) {
-        showToast("error", response.data.message || "Failed to delete report");
+        showToast('error', response.data.message || 'Failed to delete report');
         return;
       }
 
       setReports((currentReports) =>
-        currentReports.filter((report) => report._id !== reportId)
+        currentReports.filter((report) => report._id !== reportId),
       );
       setSelectedStatuses((currentStatuses) => {
         const nextStatuses = { ...currentStatuses };
         delete nextStatuses[reportId];
         return nextStatuses;
       });
-      showToast("success", "Report deleted");
+      showToast('success', 'Report deleted');
     } catch (error) {
-      console.error("Failed to delete report:", error);
-      showToast("error", getRequestErrorMessage(error, "Failed to delete report"));
+      console.error('Failed to delete report:', error);
+      showToast(
+        'error',
+        getRequestErrorMessage(error, 'Failed to delete report'),
+      );
     } finally {
       setProcessingId(null);
     }
   };
 
   const getPersonLabel = (person) => {
-    if (!person) return "Anonymous";
-    if (typeof person === "string") return person;
+    if (!person) return 'Anonymous';
+    if (typeof person === 'string') return person;
     return person.name ? `${person.name} (${person._id})` : person._id;
   };
 
   return (
     <div className="relative mt-6">
       {toast.show && (
-        <Toast
-          type={toast.type}
-          message={toast.message}
-          onClose={closeToast}
-        />
+        <Toast type={toast.type} message={toast.message} onClose={closeToast} />
       )}
 
       <div className="overflow-x-auto">
@@ -172,7 +177,7 @@ const AllReport = () => {
                   <tr
                     key={report._id}
                     className={`transition hover:bg-indigo-500/20 ${
-                      index % 2 === 0 ? "bg-gray-800/60" : "bg-gray-300/60"
+                      index % 2 === 0 ? 'bg-gray-800/60' : 'bg-gray-300/60'
                     }`}
                   >
                     <td className="max-w-xs break-all border-b border-gray-700 px-4 py-3 text-gray-200">
@@ -209,10 +214,12 @@ const AllReport = () => {
                         <button
                           type="button"
                           onClick={() => handleStatusUpdate(report._id)}
-                          disabled={isProcessing || selectedStatus === report.status}
+                          disabled={
+                            isProcessing || selectedStatus === report.status
+                          }
                           className="rounded-lg bg-indigo-600 px-3 py-1 text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          {isProcessing ? "Saving..." : "Save"}
+                          {isProcessing ? 'Saving...' : 'Save'}
                         </button>
                         <button
                           type="button"

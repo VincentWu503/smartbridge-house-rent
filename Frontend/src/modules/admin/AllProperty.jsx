@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { message } from "antd";
-import { useNavigate } from "react-router-dom";
-import { formatRupiah } from "../user/propertyDisplay";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { formatRupiah } from '../user/propertyDisplay';
 
 axios.defaults.withCredentials = true;
 
@@ -16,22 +16,22 @@ const AdminAllProperty = () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/admin/getallproperties`,
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (response.data.success) {
         setAllProperties(response.data.data);
       } else {
-        message.error(response.data.message || "Unauthorized access");
-        navigate("/login");
+        message.error(response.data.message || 'Unauthorized access');
+        navigate('/login');
       }
     } catch (error) {
       console.error(error);
       if (error.response && error.response.status === 401) {
-        message.error("Session expired, please login again");
-        navigate("/login");
+        message.error('Session expired, please login again');
+        navigate('/login');
       } else {
-        message.error("Failed to fetch Property");
+        message.error('Failed to fetch Property');
       }
     }
   };
@@ -58,16 +58,16 @@ const AdminAllProperty = () => {
     setIsSaving(true);
     const updates = {
       ...[
-        "propertyType",
-        "propertyAdType",
-        "propertyAddress",
-        "ownerContact",
-        "propertyAmt",
-        "additionalInfo",
-        "isAvailable",
+        'propertyType',
+        'propertyAdType',
+        'propertyAddress',
+        'ownerContact',
+        'propertyAmt',
+        'additionalInfo',
+        'isAvailable',
       ].reduce((fields, field) => {
         if (editingProperty[field] !== undefined) {
-          fields[field] = editingProperty[field] ?? "";
+          fields[field] = editingProperty[field] ?? '';
         }
         return fields;
       }, {}),
@@ -77,23 +77,23 @@ const AdminAllProperty = () => {
       const response = await axios.patch(
         `${import.meta.env.VITE_API_URL}/api/admin/updateproperty/${editingProperty._id}`,
         updates,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (response.data.success) {
         message.success(response.data.message);
         closeEdit();
         getAllProperty();
       } else {
-        message.error(response.data.message || "Failed to update property");
+        message.error(response.data.message || 'Failed to update property');
       }
     } catch (error) {
-      console.error("Error updating property:", error);
+      console.error('Error updating property:', error);
       if (error.response?.status === 401 || error.response?.status === 403) {
-        message.error("Admin access is required to update properties");
+        message.error('Admin access is required to update properties');
       } else {
         message.error(
           error.response?.data?.message ||
-            `${error.message} Failed to update property.`
+            `${error.message} Failed to update property.`,
         );
       }
     } finally {
@@ -121,8 +121,9 @@ const AdminAllProperty = () => {
             allProperties.map((property, index) => (
               <tr
                 key={property._id}
-                className={`transition duration-200 ${index % 2 === 0 ? "bg-gray-800/60" : "bg-gray-300/60"
-                  } hover:bg-indigo-500/20`}
+                className={`transition duration-200 ${
+                  index % 2 === 0 ? 'bg-gray-800/60' : 'bg-gray-300/60'
+                } hover:bg-indigo-500/20`}
               >
                 <td className="py-2 px-4 border-b border-gray-700 text-gray-200">
                   {property._id}
@@ -134,7 +135,7 @@ const AdminAllProperty = () => {
                   {property.propertyType}
                 </td>
                 <td className="py-2 px-4 border-b border-gray-700 text-center text-gray-300">
-                  {property.propertyAdType || "N/A"}
+                  {property.propertyAdType || 'N/A'}
                 </td>
                 <td className="py-2 px-4 border-b border-gray-700 text-center text-gray-300">
                   {property.propertyAddress}
@@ -175,23 +176,33 @@ const AdminAllProperty = () => {
             className="max-h-[90vh] w-full max-w-2xl space-y-4 overflow-y-auto rounded-xl border border-gray-700 bg-gray-900 p-6 text-white shadow-2xl"
           >
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-indigo-400">Edit Property</h3>
-              <button type="button" onClick={closeEdit} aria-label="Close editor" className="text-gray-400 hover:text-white">
+              <h3 className="text-2xl font-bold text-indigo-400">
+                Edit Property
+              </h3>
+              <button
+                type="button"
+                onClick={closeEdit}
+                aria-label="Close editor"
+                className="text-gray-400 hover:text-white"
+              >
                 ✕
               </button>
             </div>
             {[
-              ["propertyType", "Property Type"],
-              ["propertyAdType", "Ad Type"],
-              ["propertyAddress", "Address"],
-              ["ownerContact", "Owner Contact"],
+              ['propertyType', 'Property Type'],
+              ['propertyAdType', 'Ad Type'],
+              ['propertyAddress', 'Address'],
+              ['ownerContact', 'Owner Contact'],
             ].map(([name, label]) => (
-              <label key={name} className="block text-sm font-medium text-gray-300">
+              <label
+                key={name}
+                className="block text-sm font-medium text-gray-300"
+              >
                 {label}
                 <input
                   type="text"
                   name={name}
-                  value={editingProperty[name] ?? ""}
+                  value={editingProperty[name] ?? ''}
                   onChange={handleChange}
                   required
                   className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white"
@@ -206,7 +217,7 @@ const AdminAllProperty = () => {
                 min="0"
                 step="1"
                 inputMode="numeric"
-                value={editingProperty.propertyAmt ?? ""}
+                value={editingProperty.propertyAmt ?? ''}
                 onChange={handleChange}
                 required
                 className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white"
@@ -219,7 +230,7 @@ const AdminAllProperty = () => {
               Additional Details
               <textarea
                 name="additionalInfo"
-                value={editingProperty.additionalInfo ?? ""}
+                value={editingProperty.additionalInfo ?? ''}
                 onChange={handleChange}
                 rows={3}
                 className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white"
@@ -229,7 +240,7 @@ const AdminAllProperty = () => {
               Availability
               <select
                 name="isAvailable"
-                value={editingProperty.isAvailable || "Available"}
+                value={editingProperty.isAvailable || 'Available'}
                 onChange={handleChange}
                 className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white"
               >
@@ -238,11 +249,20 @@ const AdminAllProperty = () => {
               </select>
             </label>
             <div className="flex justify-end gap-3">
-              <button type="button" onClick={closeEdit} disabled={isSaving} className="rounded-lg border border-gray-600 px-4 py-2 hover:bg-gray-800 disabled:opacity-60">
+              <button
+                type="button"
+                onClick={closeEdit}
+                disabled={isSaving}
+                className="rounded-lg border border-gray-600 px-4 py-2 hover:bg-gray-800 disabled:opacity-60"
+              >
                 Cancel
               </button>
-              <button type="submit" disabled={isSaving} className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-60">
-                {isSaving ? "Saving and uploading..." : "Save Changes"}
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-60"
+              >
+                {isSaving ? 'Saving and uploading...' : 'Save Changes'}
               </button>
             </div>
           </form>

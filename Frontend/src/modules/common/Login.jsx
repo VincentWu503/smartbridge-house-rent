@@ -1,15 +1,14 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import Toast from "../common/Toast";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Toast from '../common/Toast';
 
 axios.defaults.withCredentials = true;
 
-
 const Login = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState({ email: "", password: "" });
-  const [toast, setToast] = useState({ show: false, type: "", message: "" });
+  const [data, setData] = useState({ email: '', password: '' });
+  const [toast, setToast] = useState({ show: false, type: '', message: '' });
 
   const showToast = (type, message) => {
     setToast({ show: true, type, message });
@@ -24,44 +23,51 @@ const Login = () => {
     e.preventDefault();
 
     if (!data.email || !data.password) {
-      showToast("error", "Please fill all fields");
+      showToast('error', 'Please fill all fields');
     }
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/user/login`, data, { withCredentials: true });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/user/login`,
+        data,
+        { withCredentials: true },
+      );
       if (res.data.success) {
-        showToast("success", res.data.message);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+        showToast('success', res.data.message);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
 
         const user = res.data.user;
         setTimeout(() => {
           switch (user.type) {
-            case "Admin":
-              navigate("/adminhome");
+            case 'Admin':
+              navigate('/adminhome');
               break;
-            case "Renter":
-              navigate("/renterhome");
+            case 'Renter':
+              navigate('/renterhome');
               break;
-            case "Owner":
-              if (user.granted === "ungranted") {
-                showToast("error", "Your account is not yet confirmed by the admin");
+            case 'Owner':
+              if (user.granted === 'ungranted') {
+                showToast(
+                  'error',
+                  'Your account is not yet confirmed by the admin',
+                );
               } else {
-                navigate("/ownerhome");
+                navigate('/ownerhome');
               }
               break;
             default:
-              navigate("/login");
+              navigate('/login');
               break;
           }
 
           window.location.reload();
         }, 1000);
       } else {
-        showToast("error", res.data.message);
+        showToast('error', res.data.message);
       }
     } catch (err) {
-      showToast("error", err.response?.data?.message || "Login failed");
-      navigate("/login");
+      showToast('error', err.response?.data?.message || 'Login failed');
+      navigate('/login');
     }
   };
 
@@ -81,13 +87,22 @@ const Login = () => {
           ComfyRent
         </h2>
         <div className="flex items-center gap-4 text-sm sm:gap-8 sm:text-lg">
-          <Link to="/" className="text-gray-200 hover:text-indigo-400 transition">
+          <Link
+            to="/"
+            className="text-gray-200 hover:text-indigo-400 transition"
+          >
             Home
           </Link>
-          <Link to="/faq" className="text-gray-200 hover:text-indigo-400 transition">
+          <Link
+            to="/faq"
+            className="text-gray-200 hover:text-indigo-400 transition"
+          >
             FAQ
           </Link>
-          <Link to="/login" className="text-gray-200 hover:text-indigo-400 transition">
+          <Link
+            to="/login"
+            className="text-gray-200 hover:text-indigo-400 transition"
+          >
             Login
           </Link>
           <Link
@@ -135,7 +150,10 @@ const Login = () => {
             </button>
 
             <div className="flex justify-between text-sm mt-4">
-              <Link to="/forgotpassword" className="text-red-400 hover:underline">
+              <Link
+                to="/forgotpassword"
+                className="text-red-400 hover:underline"
+              >
                 Forgot Password?
               </Link>
               <Link to="/register" className="text-indigo-400 hover:underline">

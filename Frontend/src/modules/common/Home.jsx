@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import p1 from "../../images/p1.jpg";
-import p2 from "../../images/p2.jpg";
-import p3 from "../../images/p3.jpg";
-import p4 from "../../images/p4.jpg";
-import AllPropertiesCards from "../user/AllPropertiesCards";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import p1 from '../../images/p1.jpg';
+import p2 from '../../images/p2.jpg';
+import p3 from '../../images/p3.jpg';
+import p4 from '../../images/p4.jpg';
+import AllPropertiesCards from '../user/AllPropertiesCards';
 
 const images = [p1, p2, p3, p4];
 
@@ -12,20 +12,19 @@ const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [user, setUser] = useState(null);
 
-    const handleLogOut = () => {
-          document.cookie =
-      "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  const handleLogOut = () => {
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     window.location.reload();
   };
 
   useEffect(() => {
-    const user = localStorage.getItem("user")
+    const user = localStorage.getItem('user');
     if (user) {
       setUser(JSON.parse(user));
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -51,16 +50,24 @@ const Home = () => {
         <h2 className="text-3xl font-extrabold text-indigo-400 tracking-wide">
           ComfyRent
         </h2>
-        {       
-          !user ? 
+        {!user ? (
           <div className="flex items-center gap-4 text-sm sm:gap-8 sm:text-lg">
-            <Link to="/" className="text-gray-200 hover:text-indigo-400 transition">
+            <Link
+              to="/"
+              className="text-gray-200 hover:text-indigo-400 transition"
+            >
               Home
             </Link>
-            <Link to="/faq" className="text-gray-200 hover:text-indigo-400 transition">
+            <Link
+              to="/faq"
+              className="text-gray-200 hover:text-indigo-400 transition"
+            >
               FAQ
             </Link>
-            <Link to="/login" className="text-gray-200 hover:text-indigo-400 transition">
+            <Link
+              to="/login"
+              className="text-gray-200 hover:text-indigo-400 transition"
+            >
               Login
             </Link>
             <Link
@@ -69,23 +76,30 @@ const Home = () => {
             >
               Register
             </Link>
-          </div> :
-    <div className="flex items-center space-x-6">
-      <span className="text-gray-200">Hi, {user.name}</span>
-      <Link to="/" className="text-gray-200 hover:text-indigo-400 transition">
-        Home
-      </Link>
-      <Link to="/faq" className="text-gray-200 hover:text-indigo-400 transition">
-        FAQ
-      </Link>
-      <button
-        onClick={handleLogOut}
-        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-md"
-      >
-        Log Out
-      </button>
-    </div>
-        }
+          </div>
+        ) : (
+          <div className="flex items-center space-x-6">
+            <span className="text-gray-200">Hi, {user.name}</span>
+            <Link
+              to="/"
+              className="text-gray-200 hover:text-indigo-400 transition"
+            >
+              Home
+            </Link>
+            <Link
+              to="/faq"
+              className="text-gray-200 hover:text-indigo-400 transition"
+            >
+              FAQ
+            </Link>
+            <button
+              onClick={handleLogOut}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-md"
+            >
+              Log Out
+            </button>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
@@ -99,10 +113,15 @@ const Home = () => {
           <div
             key={idx}
             aria-hidden={currentIndex !== idx}
-            className={`absolute w-full h-full transition-opacity duration-1000 ${currentIndex === idx ? "opacity-100" : "opacity-0"
-              }`}
+            className={`absolute w-full h-full transition-opacity duration-1000 ${
+              currentIndex === idx ? 'opacity-100' : 'opacity-0'
+            }`}
           >
-            <img src={img} alt={`Featured property ${idx + 1}`} className="w-full h-full object-cover" />
+            <img
+              src={img}
+              alt={`Featured property ${idx + 1}`}
+              className="w-full h-full object-cover"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
           </div>
         ))}
@@ -112,15 +131,15 @@ const Home = () => {
           onClick={goToPreviousSlide}
           aria-label="Previous featured property"
           className="flex items-center justify-center absolute left-4 top-1/2 z-10 h-12 w-12 -translate-y-1/2 rounded-full bg-black/60 px-4 py-2 text-3xl leading-none text-white hover:bg-black/80"
-        > 
-          <span className="pb-[25%]" >&lt;</span>
+        >
+          <span className="pb-[25%]">&lt;</span>
         </button>
         <button
           type="button"
           onClick={goToNextSlide}
           aria-label="Next featured property"
           className="flex items-center justify-center absolute right-4 top-1/2 z-10 h-12 w-12 -translate-y-1/2 rounded-full bg-black/60 px-4 py-2 text-3xl leading-none text-white hover:bg-black/80"
-        > 
+        >
           <span className="pb-[25%]">&gt;</span>
         </button>
 
@@ -141,11 +160,12 @@ const Home = () => {
               key={idx}
               onClick={() => goToSlide(idx)}
               aria-label={`Show featured property ${idx + 1}`}
-              aria-current={currentIndex === idx ? "true" : undefined}
-              className={`w-4 h-4 rounded-full transition-all duration-300 ${currentIndex === idx
-                  ? "bg-indigo-400 scale-125 shadow-lg"
-                  : "bg-gray-400 hover:bg-indigo-300"
-                }`}
+              aria-current={currentIndex === idx ? 'true' : undefined}
+              className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                currentIndex === idx
+                  ? 'bg-indigo-400 scale-125 shadow-lg'
+                  : 'bg-gray-400 hover:bg-indigo-300'
+              }`}
             ></button>
           ))}
         </div>
@@ -174,7 +194,6 @@ const Home = () => {
         </div>
       </div>
     </div>
-
   );
 };
 

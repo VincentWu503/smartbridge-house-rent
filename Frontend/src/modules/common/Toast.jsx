@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
+import React, { useEffect } from 'react';
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 
 const Toast = ({ type, message, onClose }) => {
   useEffect(() => {
@@ -7,16 +7,17 @@ const Toast = ({ type, message, onClose }) => {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  const isSuccess = type === "success";
+  const isSuccess = type === 'success';
 
   return (
     <div
-  className={`fixed top-5 right-5 z-[9999] flex items-center gap-3 px-5 py-3 rounded-lg shadow-xl border backdrop-blur-md animate-slideIn
-    ${type === "success"
-      ? "bg-green-500/20 border-green-500/40 text-green-300"
-      : "bg-red-500/20 border-red-500/40 text-red-300"
+      className={`fixed top-5 right-5 z-[9999] flex items-center gap-3 px-5 py-3 rounded-lg shadow-xl border backdrop-blur-md animate-slideIn
+    ${
+      type === 'success'
+        ? 'bg-green-500/20 border-green-500/40 text-green-300'
+        : 'bg-red-500/20 border-red-500/40 text-red-300'
     }`}
->
+    >
       {isSuccess ? (
         <CheckCircleIcon className="h-6 w-6 flex-shrink-0" />
       ) : (

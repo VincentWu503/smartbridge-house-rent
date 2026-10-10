@@ -1,19 +1,19 @@
-import axios from "axios";
-import React, { useState, useEffect } from "react";
-import Toast from "../common/Toast";
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import Toast from '../common/Toast';
 import {
   formatPropertyDate,
   formatRupiah,
   getPropertyImages,
-} from "./propertyDisplay";
+} from './propertyDisplay';
 
 const getStoredFavorites = () => {
   try {
-    const storedFavorites = localStorage.getItem("favoriteProperties");
+    const storedFavorites = localStorage.getItem('favoriteProperties');
     const parsedFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
     return Array.isArray(parsedFavorites) ? parsedFavorites.map(String) : [];
   } catch (error) {
-    console.error("Failed to load favorite properties:", error);
+    console.error('Failed to load favorite properties:', error);
     return [];
   }
 };
@@ -21,24 +21,24 @@ const getStoredFavorites = () => {
 const AllPropertiesCards = ({ loggedIn }) => {
   const [allProperties, setAllProperties] = useState([]);
   const [ownerStatuses, setOwnerStatuses] = useState({});
-  const [filterPropertyType, setPropertyType] = useState("");
-  const [filterPropertyAdType, setPropertyAdType] = useState("");
-  const [filterPropertyAddress, setPropertyAddress] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
+  const [filterPropertyType, setPropertyType] = useState('');
+  const [filterPropertyAdType, setPropertyAdType] = useState('');
+  const [filterPropertyAddress, setPropertyAddress] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState(getStoredFavorites);
   const [showModal, setShowModal] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [reportingProperty, setReportingProperty] = useState(null);
-  const [reportReason, setReportReason] = useState("");
-  const [reportDescription, setReportDescription] = useState("");
-  const [reportPhone, setReportPhone] = useState("");
+  const [reportReason, setReportReason] = useState('');
+  const [reportDescription, setReportDescription] = useState('');
+  const [reportPhone, setReportPhone] = useState('');
   const [isSubmittingReport, setIsSubmittingReport] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [cardImageIndexes, setCardImageIndexes] = useState({});
-  const [userDetails, setUserDetails] = useState({ fullName: "", phone: "" });
-  const [toast, setToast] = useState({ show: false, type: "", message: "" });
+  const [userDetails, setUserDetails] = useState({ fullName: '', phone: '' });
+  const [toast, setToast] = useState({ show: false, type: '', message: '' });
 
   const toggleFavorite = (propertyId) => {
     const propertyIdString = String(propertyId);
@@ -48,12 +48,12 @@ const AllPropertiesCards = ({ loggedIn }) => {
 
     try {
       localStorage.setItem(
-        "favoriteProperties",
-        JSON.stringify(updatedFavorites)
+        'favoriteProperties',
+        JSON.stringify(updatedFavorites),
       );
       setFavoriteIds(updatedFavorites);
     } catch (error) {
-      console.error("Failed to save favorite properties:", error);
+      console.error('Failed to save favorite properties:', error);
     }
   };
 
@@ -65,7 +65,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/user/getAllProperties`,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setAllProperties(res.data.data);
     } catch (error) {
@@ -78,7 +78,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/user/bookinghandle/${propertyId}`,
         { userDetails, status, ownerId },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (res.data.success) {
@@ -89,16 +89,16 @@ const AllPropertiesCards = ({ loggedIn }) => {
       }
     } catch (error) {
       console.log(error);
-      showToast("Booking failed");
+      showToast('Booking failed');
     }
   };
 
   const closeReportForm = () => {
     if (isSubmittingReport) return;
     setReportingProperty(null);
-    setReportReason("");
-    setReportDescription("");
-    setReportPhone("");
+    setReportReason('');
+    setReportDescription('');
+    setReportPhone('');
   };
 
   const handleReportSubmit = async (event) => {
@@ -115,24 +115,24 @@ const AllPropertiesCards = ({ loggedIn }) => {
           description: reportDescription.trim(),
           userPhoneNumber: reportPhone.trim(),
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (!response.data.success) {
-        showToast("error", response.data.message || "Unable to submit report.");
+        showToast('error', response.data.message || 'Unable to submit report.');
         return;
       }
 
-      showToast("success", response.data.message || "Report submitted.");
+      showToast('success', response.data.message || 'Report submitted.');
       setReportingProperty(null);
-      setReportReason("");
-      setReportDescription("");
-      setReportPhone("");
+      setReportReason('');
+      setReportDescription('');
+      setReportPhone('');
     } catch (error) {
-      console.error("Failed to submit owner report:", error);
+      console.error('Failed to submit owner report:', error);
       showToast(
-        "error",
-        error.response?.data?.message || "Unable to submit report."
+        'error',
+        error.response?.data?.message || 'Unable to submit report.',
       );
     } finally {
       setIsSubmittingReport(false);
@@ -151,7 +151,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
             const ownerId = property.ownerId?._id || property.ownerId;
             return ownerId ? String(ownerId) : null;
           })
-          .filter(Boolean)
+          .filter(Boolean),
       ),
     ];
 
@@ -160,7 +160,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
     let isCurrent = true;
     setOwnerStatuses((statuses) => ({
       ...statuses,
-      ...Object.fromEntries(ownerIds.map((ownerId) => [ownerId, "loading"])),
+      ...Object.fromEntries(ownerIds.map((ownerId) => [ownerId, 'loading'])),
     }));
 
     axios
@@ -178,11 +178,13 @@ const AllPropertiesCards = ({ loggedIn }) => {
         }
       })
       .catch((error) => {
-        console.error("Failed to retrieve owner statuses:", error);
+        console.error('Failed to retrieve owner statuses:', error);
         if (isCurrent) {
           setOwnerStatuses((statuses) => ({
             ...statuses,
-            ...Object.fromEntries(ownerIds.map((ownerId) => [ownerId, "unavailable"])),
+            ...Object.fromEntries(
+              ownerIds.map((ownerId) => [ownerId, 'unavailable']),
+            ),
           }));
         }
       });
@@ -195,39 +197,39 @@ const AllPropertiesCards = ({ loggedIn }) => {
   const filteredProperties = allProperties
     .filter(
       (property) =>
-        filterPropertyAddress === "" ||
+        filterPropertyAddress === '' ||
         property.propertyAddress
           .toLowerCase()
-          .includes(filterPropertyAddress.toLowerCase())
+          .includes(filterPropertyAddress.toLowerCase()),
     )
     .filter(
       (property) =>
-        filterPropertyAdType === "" ||
+        filterPropertyAdType === '' ||
         property.propertyAdType
           .toLowerCase()
-          .includes(filterPropertyAdType.toLowerCase())
+          .includes(filterPropertyAdType.toLowerCase()),
     )
     .filter(
       (property) =>
-        filterPropertyType === "" ||
+        filterPropertyType === '' ||
         property.propertyType
           .toLowerCase()
-          .includes(filterPropertyType.toLowerCase())
+          .includes(filterPropertyType.toLowerCase()),
     )
     .filter((property) => {
-      if (minPrice === "" && maxPrice === "") return true;
+      if (minPrice === '' && maxPrice === '') return true;
 
       const price = Number(property.propertyAmt);
       if (!Number.isFinite(price)) return false;
 
       return (
-        (minPrice === "" || price >= Number(minPrice)) &&
-        (maxPrice === "" || price <= Number(maxPrice))
+        (minPrice === '' || price >= Number(minPrice)) &&
+        (maxPrice === '' || price <= Number(maxPrice))
       );
     })
     .filter(
       (property) =>
-        !showFavoritesOnly || favoriteIds.includes(String(property._id))
+        !showFavoritesOnly || favoriteIds.includes(String(property._id)),
     );
 
   const openModal = (property) => {
@@ -254,7 +256,8 @@ const AllPropertiesCards = ({ loggedIn }) => {
   const changeModalImage = (direction) => {
     if (!selectedImages.length) return;
     setSelectedImageIndex(
-      (index) => (index + direction + selectedImages.length) % selectedImages.length
+      (index) =>
+        (index + direction + selectedImages.length) % selectedImages.length,
     );
   };
 
@@ -323,11 +326,13 @@ const AllPropertiesCards = ({ loggedIn }) => {
           aria-pressed={showFavoritesOnly}
           className={`px-4 py-2 rounded transition ${
             showFavoritesOnly
-              ? "bg-yellow-400 text-white"
-              : "border border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-white"
+              ? 'bg-yellow-400 text-white'
+              : 'border border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-white'
           }`}
         >
-          {showFavoritesOnly ? "Show All Properties" : `Favorites (${favoriteIds.length})`}
+          {showFavoritesOnly
+            ? 'Show All Properties'
+            : `Favorites (${favoriteIds.length})`}
         </button>
       </div>
 
@@ -351,7 +356,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
                     {image ? (
                       <img
                         src={`${import.meta.env.VITE_API_URL}${image.path}`}
-                        alt={`${property.propertyAddress || "Property"} image ${imageIndex + 1}`}
+                        alt={`${property.propertyAddress || 'Property'} image ${imageIndex + 1}`}
                         className="w-full h-40 object-cover"
                       />
                     ) : (
@@ -363,18 +368,20 @@ const AllPropertiesCards = ({ loggedIn }) => {
                       <>
                         <button
                           type="button"
-                          onClick={() => changeCardImage(property._id, images.length, -1)}
-                          aria-label={`Previous image for ${property.propertyAddress || "property"}`}
+                          onClick={() =>
+                            changeCardImage(property._id, images.length, -1)
+                          }
+                          aria-label={`Previous image for ${property.propertyAddress || 'property'}`}
                           className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-xl text-white hover:bg-black"
-                        >
-                        </button>
+                        ></button>
                         <button
                           type="button"
-                          onClick={() => changeCardImage(property._id, images.length, 1)}
-                          aria-label={`Next image for ${property.propertyAddress || "property"}`}
+                          onClick={() =>
+                            changeCardImage(property._id, images.length, 1)
+                          }
+                          aria-label={`Next image for ${property.propertyAddress || 'property'}`}
                           className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-xl text-white hover:bg-black"
-                        >
-                        </button>
+                        ></button>
                         <span className="absolute bottom-2 right-2 rounded bg-black/70 px-2 py-1 text-xs text-white">
                           {imageIndex + 1} / {images.length}
                         </span>
@@ -388,20 +395,22 @@ const AllPropertiesCards = ({ loggedIn }) => {
                 onClick={() => toggleFavorite(property._id)}
                 aria-label={
                   favoriteIds.includes(String(property._id))
-                    ? "Remove from favorites"
-                    : "Add to favorites"
+                    ? 'Remove from favorites'
+                    : 'Add to favorites'
                 }
                 aria-pressed={favoriteIds.includes(String(property._id))}
                 className={`absolute top-3 right-3 z-10 aspect-square rounded-full bg-black/70 px-2 py-1 text-2xl leading-none transition ${
                   favoriteIds.includes(String(property._id))
-                    ? "text-yellow-200"
-                    : "text-white hover:text-yellow-100"
+                    ? 'text-yellow-200'
+                    : 'text-white hover:text-yellow-100'
                 }`}
               >
-                {favoriteIds.includes(String(property._id)) ? "★" : "✰"}
+                {favoriteIds.includes(String(property._id)) ? '★' : '✰'}
               </button>
               <div className="p-4">
-                <h3 className="font-semibold text-lg text-white">{property.propertyAddress}</h3>
+                <h3 className="font-semibold text-lg text-white">
+                  {property.propertyAddress}
+                </h3>
                 <p className="text-gray-400 text-sm">
                   {property.propertyType} - {property.propertyAdType}
                 </p>
@@ -413,25 +422,27 @@ const AllPropertiesCards = ({ loggedIn }) => {
                     <b>Owner:</b> {property.ownerName}
                   </span>
                   {(() => {
-                    const ownerId = String(property.ownerId?._id || property.ownerId || "");
+                    const ownerId = String(
+                      property.ownerId?._id || property.ownerId || '',
+                    );
                     const ownerStatus = ownerStatuses[ownerId];
-                    const isVerified = ownerStatus === "granted";
+                    const isVerified = ownerStatus === 'granted';
                     const badgeText =
-                      ownerStatus === "loading"
-                        ? "Checking..."
-                        : ownerStatus === "unavailable"
-                          ? "Status unavailable"
+                      ownerStatus === 'loading'
+                        ? 'Checking...'
+                        : ownerStatus === 'unavailable'
+                          ? 'Status unavailable'
                           : isVerified
-                            ? "Verified"
-                            : "Unverified";
+                            ? 'Verified'
+                            : 'Unverified';
 
                     return (
                       <span className="inline-flex items-center gap-1">
                         <span
                           className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
                             isVerified
-                              ? "bg-green-100 text-green-800"
-                              : "bg-amber-100 text-amber-800"
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-amber-100 text-amber-800'
                           }`}
                         >
                           {badgeText}
@@ -450,7 +461,10 @@ const AllPropertiesCards = ({ loggedIn }) => {
                             role="tooltip"
                             className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-64 -translate-x-1/2 rounded bg-gray-900 p-2 text-xs font-normal text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
                           >
-                            Verified means an admin reviewed the owner&apos;s identity and authorization to list properties. It does not guarantee every listing detail or future conduct.
+                            Verified means an admin reviewed the owner&apos;s
+                            identity and authorization to list properties. It
+                            does not guarantee every listing detail or future
+                            conduct.
                           </span>
                         </span>
                       </span>
@@ -459,43 +473,48 @@ const AllPropertiesCards = ({ loggedIn }) => {
                 </div>
                 <div className="mt-3 space-y-1 border-t border-gray-700 pt-3 text-xs text-gray-400">
                   <p>
-                    <b>Posted:</b> {formatPropertyDate(property.createdAt, property._id)}
+                    <b>Posted:</b>{' '}
+                    {formatPropertyDate(property.createdAt, property._id)}
                   </p>
                   <p>
-                    <b>Last updated:</b> {formatPropertyDate(property.updatedAt)}
+                    <b>Last updated:</b>{' '}
+                    {formatPropertyDate(property.updatedAt)}
                   </p>
                 </div>
-                {property.isAvailable === "Available" ? (
-                  <p className="text-center mt-2 text-green-400 text-xs">Available</p>
+                {property.isAvailable === 'Available' ? (
+                  <p className="text-center mt-2 text-green-400 text-xs">
+                    Available
+                  </p>
                 ) : (
-                  <p className="text-center mt-2 text-red-400 text-xs">Not Available</p>
+                  <p className="text-center mt-2 text-red-400 text-xs">
+                    Not Available
+                  </p>
                 )}
-                {property.isAvailable === "Available" ? (
-
-                    <button
-                      onClick={() => openModal(property)}
-                      className="mt-3 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
-                    >
-                      Get Info / Book
-                    </button>
+                {property.isAvailable === 'Available' ? (
+                  <button
+                    onClick={() => openModal(property)}
+                    className="mt-3 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
+                  >
+                    Get Info / Book
+                  </button>
                 ) : (
-                    <button
-                      onClick={() => openModal(property)}
-                      disabled
-                      className="mt-3 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition
+                  <button
+                    onClick={() => openModal(property)}
+                    disabled
+                    className="mt-3 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition
                         disabled:bg-gray-600 disabled:cursor-not-allowed disabled:pointer-events-none
                       "
-                    >
-                      Out of Order
-                    </button>
+                  >
+                    Out of Order
+                  </button>
                 )}
                 <button
                   type="button"
                   onClick={() => {
                     setReportingProperty(property);
-                    setReportReason("");
-                    setReportDescription("");
-                    setReportPhone("");
+                    setReportReason('');
+                    setReportDescription('');
+                    setReportPhone('');
                   }}
                   className="mt-2 w-full text-sm text-red-300 underline decoration-red-300/60 underline-offset-2 hover:text-red-200"
                 >
@@ -507,8 +526,8 @@ const AllPropertiesCards = ({ loggedIn }) => {
         ) : (
           <p className="text-gray-400">
             {showFavoritesOnly
-              ? "No favorite properties match these filters."
-              : "No properties available at the moment."}
+              ? 'No favorite properties match these filters.'
+              : 'No properties available at the moment.'}
           </p>
         )}
       </div>
@@ -527,7 +546,10 @@ const AllPropertiesCards = ({ loggedIn }) => {
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 id="report-owner-title" className="text-xl font-bold text-red-300">
+                <h3
+                  id="report-owner-title"
+                  className="text-xl font-bold text-red-300"
+                >
                   Report owner
                 </h3>
                 <p className="mt-1 text-sm text-gray-400">
@@ -551,8 +573,8 @@ const AllPropertiesCards = ({ loggedIn }) => {
               </legend>
               <div className="space-y-2">
                 {[
-                  { value: "scam", label: "Scam" },
-                  { value: "fake post", label: "Fake post" },
+                  { value: 'scam', label: 'Scam' },
+                  { value: 'fake post', label: 'Fake post' },
                 ].map((reason) => (
                   <label
                     key={reason.value}
@@ -616,7 +638,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
                 disabled={isSubmittingReport || !reportReason}
                 className="text-white rounded-lg bg-red-600 px-4 py-2 font-semibold hover:bg-red-700 disabled:cursor-wait disabled:opacity-50"
               >
-                {isSubmittingReport ? "Submitting..." : "Submit report"}
+                {isSubmittingReport ? 'Submitting...' : 'Submit report'}
               </button>
             </div>
           </form>
@@ -640,7 +662,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
               {selectedImage ? (
                 <img
                   src={`${import.meta.env.VITE_API_URL}${selectedImage.path}`}
-                  alt={`${selectedProperty.propertyAddress || "Property"} image ${selectedImageIndex + 1}`}
+                  alt={`${selectedProperty.propertyAddress || 'Property'} image ${selectedImageIndex + 1}`}
                   className="w-full h-64 object-cover rounded"
                 />
               ) : (
@@ -656,18 +678,18 @@ const AllPropertiesCards = ({ loggedIn }) => {
                     aria-label="Previous property image"
                     className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-2 text-white hover:bg-black"
                   >
-                  ‹
+                    ‹
                   </button>
                   <button
-                  type="button"
-                  onClick={() => changeModalImage(1)}
+                    type="button"
+                    onClick={() => changeModalImage(1)}
                     aria-label="Next property image"
                     className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-2 text-white hover:bg-black"
                   >
-                  ›
+                    ›
                   </button>
                   <span className="absolute bottom-3 right-3 rounded bg-black/70 px-2 py-1 text-xs text-white">
-                  {activeModalImageIndex + 1} / {selectedImages.length}
+                    {activeModalImageIndex + 1} / {selectedImages.length}
                   </span>
                 </>
               )}
@@ -675,7 +697,10 @@ const AllPropertiesCards = ({ loggedIn }) => {
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
               <div>
                 <p>
-                  <b>Owner Contact:</b> {loggedIn ? (selectedProperty.ownerContact) : ('Please login to see owner contact info.')}
+                  <b>Owner Contact:</b>{' '}
+                  {loggedIn
+                    ? selectedProperty.ownerContact
+                    : 'Please login to see owner contact info.'}
                 </p>
                 <p>
                   <b>Availability:</b> {selectedProperty.isAvailable}
@@ -701,10 +726,15 @@ const AllPropertiesCards = ({ loggedIn }) => {
             </p>
             <div className="mt-3 space-y-1 border-t border-gray-700 pt-3 text-xs text-gray-400">
               <p>
-                <b>Posted:</b> {formatPropertyDate(selectedProperty.createdAt, selectedProperty._id)}
+                <b>Posted:</b>{' '}
+                {formatPropertyDate(
+                  selectedProperty.createdAt,
+                  selectedProperty._id,
+                )}
               </p>
               <p>
-                <b>Last updated:</b> {formatPropertyDate(selectedProperty.updatedAt)}
+                <b>Last updated:</b>{' '}
+                {formatPropertyDate(selectedProperty.updatedAt)}
               </p>
             </div>
 
@@ -713,7 +743,11 @@ const AllPropertiesCards = ({ loggedIn }) => {
               className="mt-4 space-y-2"
               onSubmit={(e) => {
                 e.preventDefault();
-                handleBooking("pending", selectedProperty._id, selectedProperty.ownerId);
+                handleBooking(
+                  'pending',
+                  selectedProperty._id,
+                  selectedProperty.ownerId,
+                );
               }}
             >
               <input
@@ -743,19 +777,19 @@ const AllPropertiesCards = ({ loggedIn }) => {
                 <button
                   type="submit"
                   className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
-                  >
-                    Book Property
+                >
+                  Book Property
                 </button>
-                ):
-              (                <button
+              ) : (
+                <button
                   type="submit"
                   disabled
                   className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition
                             disabled:bg-gray-600 disabled:cursor-not-allowed disabled:pointer-events-none"
-                  >
-                    Please login to book
-                </button>)  
-            }              
+                >
+                  Please login to book
+                </button>
+              )}
             </form>
           </div>
         </div>

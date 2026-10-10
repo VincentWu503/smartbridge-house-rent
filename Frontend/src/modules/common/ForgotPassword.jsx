@@ -1,24 +1,22 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import Toast from "../common/Toast";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Toast from '../common/Toast';
 
 axios.defaults.withCredentials = true;
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const [toast, setToast] = useState({ show: false, type: "", message: "" });
+  const [toast, setToast] = useState({ show: false, type: '', message: '' });
   const [data, setData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
-
 
   const showToast = (type, message) => {
     setToast({ show: true, type, message });
   };
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,23 +27,23 @@ const ForgotPassword = () => {
     e.preventDefault();
 
     if (!data.email || !data.password || !data.confirmPassword) {
-      showToast("Please fill all fields");
+      showToast('Please fill all fields');
     }
 
     if (data.password !== data.confirmPassword) {
-       showToast("Passwords do not match");
+      showToast('Passwords do not match');
     }
 
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/user/forgotpassword`,
         data,
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (res.data.success) {
-        showToast("Your password has been changed!");
-        navigate("/login");
+        showToast('Your password has been changed!');
+        navigate('/login');
       } else {
         showToast(res.data.message);
       }
@@ -53,9 +51,9 @@ const ForgotPassword = () => {
       if (err.response && err.response.status === 401) {
         showToast("User doesn't exist");
       } else {
-        showToast("Something went wrong. Please try again.");
+        showToast('Something went wrong. Please try again.');
       }
-      navigate("/register");
+      navigate('/register');
     }
   };
 
@@ -69,28 +67,37 @@ const ForgotPassword = () => {
         />
       )}
       {/* Navbar */}
-     <nav className="fixed top-0 left-0 w-full z-50 bg-black/30 backdrop-blur-lg shadow-md py-4 px-8 flex justify-between items-center">
-             <h2 className="text-3xl font-extrabold text-indigo-400 tracking-wide">
-               ComfyRent
-             </h2>
-             <div className="flex items-center gap-4 text-sm sm:gap-8 sm:text-lg">
-               <Link to="/" className="text-gray-200 hover:text-indigo-400 transition">
-                 Home
-               </Link>
-               <Link to="/faq" className="text-gray-200 hover:text-indigo-400 transition">
-                 FAQ
-               </Link>
-               <Link to="/login" className="text-gray-200 hover:text-indigo-400 transition">
-                 Login
-               </Link>
-               <Link
-                 to="/register"
-                 className="text-white bg-indigo-400 px-4 py-2 rounded-lg shadow hover:bg-indigo-500 transition"
-               >
-                 Register
-               </Link>
-             </div>
-           </nav>
+      <nav className="fixed top-0 left-0 w-full z-50 bg-black/30 backdrop-blur-lg shadow-md py-4 px-8 flex justify-between items-center">
+        <h2 className="text-3xl font-extrabold text-indigo-400 tracking-wide">
+          ComfyRent
+        </h2>
+        <div className="flex items-center gap-4 text-sm sm:gap-8 sm:text-lg">
+          <Link
+            to="/"
+            className="text-gray-200 hover:text-indigo-400 transition"
+          >
+            Home
+          </Link>
+          <Link
+            to="/faq"
+            className="text-gray-200 hover:text-indigo-400 transition"
+          >
+            FAQ
+          </Link>
+          <Link
+            to="/login"
+            className="text-gray-200 hover:text-indigo-400 transition"
+          >
+            Login
+          </Link>
+          <Link
+            to="/register"
+            className="text-white bg-indigo-400 px-4 py-2 rounded-lg shadow hover:bg-indigo-500 transition"
+          >
+            Register
+          </Link>
+        </div>
+      </nav>
 
       {/* Forgot Password Form */}
       <div className="flex-grow flex justify-center items-center px-4">
@@ -141,7 +148,7 @@ const ForgotPassword = () => {
             </button>
 
             <div className="text-center text-red-400 text-sm mt-4">
-              Don't have an account?{" "}
+              Don't have an account?{' '}
               <Link to="/register" className="text-indigo-600 hover:underline">
                 Sign Up
               </Link>

@@ -1,14 +1,14 @@
-import React, { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from "../../../App";
-import AddProperty from "./AddProperty";
-import AllProperties from "./AllProperties";
-import AllBookings from "./AllBookings";
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../../../App';
+import AddProperty from './AddProperty';
+import AllProperties from './AllProperties';
+import AllBookings from './AllBookings';
 
 const tabs = [
-  { name: "Add Property", component: <AddProperty /> },
-  { name: "All Properties", component: <AllProperties /> },
-  { name: "All Bookings", component: <AllBookings /> },
+  { name: 'Add Property', component: <AddProperty /> },
+  { name: 'All Properties', component: <AllProperties /> },
+  { name: 'All Bookings', component: <AllBookings /> },
 ];
 
 const OwnerHome = () => {
@@ -19,10 +19,9 @@ const OwnerHome = () => {
   if (!user || !user.userData) return null;
 
   const handleLogOut = () => {
-    document.cookie =
-      "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    localStorage.removeItem("user");
-    navigate("/");
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    localStorage.removeItem('user');
+    navigate('/');
   };
 
   return (
@@ -30,12 +29,20 @@ const OwnerHome = () => {
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-black/30 backdrop-blur-lg shadow-md border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          <h2 className="text-3xl font-extrabold text-indigo-400 tracking-wide">ComfyRent</h2>
+          <h2 className="text-3xl font-extrabold text-indigo-400 tracking-wide">
+            ComfyRent
+          </h2>
           <div className="flex items-center gap-6">
-            <Link to="/" className="text-gray-200 hover:text-indigo-400 transition">
+            <Link
+              to="/"
+              className="text-gray-200 hover:text-indigo-400 transition"
+            >
               Home
             </Link>
-            <Link to="/faq" className="text-gray-300 transition hover:text-indigo-400">
+            <Link
+              to="/faq"
+              className="text-gray-300 transition hover:text-indigo-400"
+            >
               FAQ
             </Link>
             <h5 className="font-medium text-gray-300">
@@ -59,10 +66,11 @@ const OwnerHome = () => {
               key={index}
               onClick={() => setActiveTab(index)}
               className={`px-4 py-2 font-medium text-sm transition-all duration-200 rounded-t-lg
-            ${activeTab === index
-                  ? "text-indigo-400 border-b-2 border-indigo-500 bg-indigo-500/10 shadow-inner"
-                  : "text-gray-400 hover:text-indigo-300 hover:bg-gray-800/40"
-                }`}
+            ${
+              activeTab === index
+                ? 'text-indigo-400 border-b-2 border-indigo-500 bg-indigo-500/10 shadow-inner'
+                : 'text-gray-400 hover:text-indigo-300 hover:bg-gray-800/40'
+            }`}
             >
               {tab.name}
             </button>
@@ -75,7 +83,6 @@ const OwnerHome = () => {
         </div>
       </div>
     </div>
-
   );
 };
 

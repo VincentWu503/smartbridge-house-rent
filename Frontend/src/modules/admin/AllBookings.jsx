@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { message } from "antd";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 axios.defaults.withCredentials = true;
 
@@ -13,26 +13,25 @@ const AdminAllBookings = () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/admin/getallbookings`,
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (response.data.success) {
         setAllBookings(response.data.data);
       } else {
-        message.error(response.data.message || "Unauthorized access");
-        navigate("/login"); 
+        message.error(response.data.message || 'Unauthorized access');
+        navigate('/login');
       }
     } catch (error) {
       console.error(error);
       if (error.response && error.response.status === 401) {
-        message.error("Session expired, please login again");
-        navigate("/login");
+        message.error('Session expired, please login again');
+        navigate('/login');
       } else {
-        message.error("Failed to fetch bookings");
+        message.error('Failed to fetch bookings');
       }
     }
   };
-
 
   useEffect(() => {
     getAllBooking();
@@ -57,8 +56,9 @@ const AdminAllBookings = () => {
             allBookings.map((booking, index) => (
               <tr
                 key={booking._id}
-                className={`transition duration-200 ${index % 2 === 0 ? "bg-gray-800/60" : "bg-gray-300/60"
-                  } hover:bg-indigo-500/20`}
+                className={`transition duration-200 ${
+                  index % 2 === 0 ? 'bg-gray-800/60' : 'bg-gray-300/60'
+                } hover:bg-indigo-500/20`}
               >
                 <td className="py-2 px-4 border-b border-gray-700 text-gray-200">
                   {booking._id}
@@ -79,12 +79,13 @@ const AdminAllBookings = () => {
                   {booking.phone}
                 </td>
                 <td
-                  className={`py-2 px-4 border-b border-gray-700 text-center font-semibold ${booking.bookingStatus === "Confirmed"
-                      ? "text-green-400"
-                      : booking.bookingStatus === "Pending"
-                        ? "text-yellow-400"
-                        : "text-red-400"
-                    }`}
+                  className={`py-2 px-4 border-b border-gray-700 text-center font-semibold ${
+                    booking.bookingStatus === 'Confirmed'
+                      ? 'text-green-400'
+                      : booking.bookingStatus === 'Pending'
+                        ? 'text-yellow-400'
+                        : 'text-red-400'
+                  }`}
                 >
                   {booking.bookingStatus}
                 </td>
