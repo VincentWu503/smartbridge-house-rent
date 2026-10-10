@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const { authMiddleware } = require("../middlewares/authMiddleware");
-const { addPropertyController, getAllOwnerPropertiesController, handleAllBookingstatusController, deletePropertyController, updatePropertyController, getAllBookingsController } = require("../controllers/ownerController");
+const { getOwnerStatusController, addPropertyController, getAllOwnerPropertiesController, handleAllBookingstatusController, deletePropertyController, updatePropertyController, getAllBookingsController } = require("../controllers/ownerController");
 
 
 const router = express.Router();
@@ -15,6 +15,8 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
+
+router.get("/status", getOwnerStatusController);
 
 router.post(
   "/postproperty",

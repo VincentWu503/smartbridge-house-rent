@@ -20,6 +20,7 @@ const getStoredFavorites = () => {
 
 const AllPropertiesCards = ({ loggedIn }) => {
   const [allProperties, setAllProperties] = useState([]);
+  const [ownerStatuses, setOwnerStatuses] = useState({});
   const [filterPropertyType, setPropertyType] = useState("");
   const [filterPropertyAdType, setPropertyAdType] = useState("");
   const [filterPropertyAddress, setPropertyAddress] = useState("");
@@ -141,6 +142,55 @@ const AllPropertiesCards = ({ loggedIn }) => {
   useEffect(() => {
     getAllProperties();
   }, []);
+
+  useEffect(() => {
+    const ownerIds = [
+      ...new Set(
+        allProperties
+          .map((property) => {
+            const ownerId = property.ownerId?._id || property.ownerId;
+            return ownerId ? String(ownerId) : null;
+          })
+          .filter(Boolean)
+      ),
+    ];
+
+    if (!ownerIds.length) return;
+
+    let isCurrent = true;
+    setOwnerStatuses((statuses) => ({
+      ...statuses,
+      ...Object.fromEntries(ownerIds.map((ownerId) => [ownerId, "loading"])),
+    }));
+
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/owner/status`, {
+        params: { ownerIds },
+        paramsSerializer: { indexes: null },
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (isCurrent) {
+          setOwnerStatuses((statuses) => ({
+            ...statuses,
+            ...response.data.statuses,
+          }));
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to retrieve owner statuses:", error);
+        if (isCurrent) {
+          setOwnerStatuses((statuses) => ({
+            ...statuses,
+            ...Object.fromEntries(ownerIds.map((ownerId) => [ownerId, "unavailable"])),
+          }));
+        }
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [allProperties]);
 
   const filteredProperties = allProperties
     .filter(
@@ -358,9 +408,55 @@ const AllPropertiesCards = ({ loggedIn }) => {
                 <p className="mt-2 text-sm">
                   <b>Price:</b> {formatRupiah(property.propertyAmt)}
                 </p>
-                <p className="text-sm">
-                  <b>Owner:</b> {property.ownerName}
-                </p>
+                <div className="flex flex-wrap items-center gap-2 text-sm">
+                  <span>
+                    <b>Owner:</b> {property.ownerName}
+                  </span>
+                  {(() => {
+                    const ownerId = String(property.ownerId?._id || property.ownerId || "");
+                    const ownerStatus = ownerStatuses[ownerId];
+                    const isVerified = ownerStatus === "granted";
+                    const badgeText =
+                      ownerStatus === "loading"
+                        ? "Checking..."
+                        : ownerStatus === "unavailable"
+                          ? "Status unavailable"
+                          : isVerified
+                            ? "Verified"
+                            : "Unverified";
+
+                    return (
+                      <span className="inline-flex items-center gap-1">
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                            isVerified
+                              ? "bg-green-100 text-green-800"
+                              : "bg-amber-100 text-amber-800"
+                          }`}
+                        >
+                          {badgeText}
+                        </span>
+                        <span className="group relative inline-flex">
+                          <button
+                            type="button"
+                            aria-label="What the verified badge means"
+                            aria-describedby={`verified-badge-help-${property._id}`}
+                            className="flex h-4 w-4 items-center justify-center rounded-full border border-gray-400 text-[10px] font-bold text-gray-300 hover:border-white hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                          >
+                            ?
+                          </button>
+                          <span
+                            id={`verified-badge-help-${property._id}`}
+                            role="tooltip"
+                            className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-64 -translate-x-1/2 rounded bg-gray-900 p-2 text-xs font-normal text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+                          >
+                            Verified means an admin reviewed the owner&apos;s identity and authorization to list properties. It does not guarantee every listing detail or future conduct.
+                          </span>
+                        </span>
+                      </span>
+                    );
+                  })()}
+                </div>
                 <div className="mt-3 space-y-1 border-t border-gray-700 pt-3 text-xs text-gray-400">
                   <p>
                     <b>Posted:</b> {formatPropertyDate(property.createdAt, property._id)}

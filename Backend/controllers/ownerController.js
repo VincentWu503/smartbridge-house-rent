@@ -1,7 +1,59 @@
 const userSchema = require("../models/UserSchema");
 const propertySchema = require("../models/PropertySchema");
 const bookingSchema = require("../models/BookingSchema");
+const mongoose = require("mongoose");
 const { buildPropertyUpdate } = require("../utils/propertyUpdate");
+
+const getOwnerStatusController = async (req, res) => {
+  const ownerIds = (Array.isArray(req.query.ownerIds)
+    ? req.query.ownerIds
+    : [req.query.ownerIds]
+  )
+    .filter(Boolean)
+    .flatMap((value) => value.split(","))
+    .map((ownerId) => ownerId.trim())
+    .filter(Boolean);
+
+  if (!ownerIds.length || ownerIds.length > 100) {
+    return res.status(400).json({
+      success: false,
+      message: "Provide between 1 and 100 ownerIds.",
+    });
+  }
+  if (ownerIds.some((ownerId) => !mongoose.isValidObjectId(ownerId))) {
+    return res.status(400).json({
+      success: false,
+      message: "All ownerIds must be valid IDs.",
+    });
+  }
+
+  try {
+    const owners = await userSchema.find({
+      _id: { $in: ownerIds },
+      type: "Owner",
+    })
+      .select("granted")
+      .lean();
+
+    const statuses = Object.fromEntries(
+      ownerIds.map((ownerId) => [ownerId, "ungranted"])
+    );
+    owners.forEach((owner) => {
+      statuses[String(owner._id)] = owner.granted || "ungranted";
+    });
+
+    return res.status(200).json({
+      success: true,
+      statuses,
+    });
+  } catch (error) {
+    console.error("Error retrieving owner statuses:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Unable to retrieve owner statuses.",
+    });
+  }
+};
 
 //////////adding property by owner////////
 const addPropertyController = async (req, res) => {
@@ -168,6 +220,7 @@ const handleAllBookingstatusController = async (req, res) => {
   }
 };
 module.exports = {
+  getOwnerStatusController,
   addPropertyController,
   getAllOwnerPropertiesController,
   deletePropertyController,
