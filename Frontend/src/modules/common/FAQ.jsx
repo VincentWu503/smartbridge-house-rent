@@ -107,7 +107,7 @@ const renterFaqs = [
   },
   {
     question:
-      "What if an owner asks me to pay outside the platform or send a deposit before I’ve seen the property?",
+      "What if an owner asks me to pay or send a deposit before I've seen the property and signing contract agreement?",
     answer:
       "Treat this as a warning sign. Do not transfer money before you have seen the property and confirmed the owner. Report the owner through the app.",
   },
