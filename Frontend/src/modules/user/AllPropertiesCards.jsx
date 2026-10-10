@@ -29,6 +29,11 @@ const AllPropertiesCards = ({ loggedIn }) => {
   const [favoriteIds, setFavoriteIds] = useState(getStoredFavorites);
   const [showModal, setShowModal] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [reportingProperty, setReportingProperty] = useState(null);
+  const [reportReason, setReportReason] = useState("");
+  const [reportDescription, setReportDescription] = useState("");
+  const [reportPhone, setReportPhone] = useState("");
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [cardImageIndexes, setCardImageIndexes] = useState({});
   const [userDetails, setUserDetails] = useState({ fullName: "", phone: "" });
@@ -84,6 +89,52 @@ const AllPropertiesCards = ({ loggedIn }) => {
     } catch (error) {
       console.log(error);
       showToast("Booking failed");
+    }
+  };
+
+  const closeReportForm = () => {
+    if (isSubmittingReport) return;
+    setReportingProperty(null);
+    setReportReason("");
+    setReportDescription("");
+    setReportPhone("");
+  };
+
+  const handleReportSubmit = async (event) => {
+    event.preventDefault();
+    if (!reportingProperty || isSubmittingReport) return;
+
+    setIsSubmittingReport(true);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/reports`,
+        {
+          ownerId: reportingProperty.ownerId,
+          reason: reportReason,
+          description: reportDescription.trim(),
+          userPhoneNumber: reportPhone.trim(),
+        },
+        { withCredentials: true }
+      );
+
+      if (!response.data.success) {
+        showToast("error", response.data.message || "Unable to submit report.");
+        return;
+      }
+
+      showToast("success", response.data.message || "Report submitted.");
+      setReportingProperty(null);
+      setReportReason("");
+      setReportDescription("");
+      setReportPhone("");
+    } catch (error) {
+      console.error("Failed to submit owner report:", error);
+      showToast(
+        "error",
+        error.response?.data?.message || "Unable to submit report."
+      );
+    } finally {
+      setIsSubmittingReport(false);
     }
   };
 
@@ -344,6 +395,18 @@ const AllPropertiesCards = ({ loggedIn }) => {
                       Out of Order
                     </button>
                 )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setReportingProperty(property);
+                    setReportReason("");
+                    setReportDescription("");
+                    setReportPhone("");
+                  }}
+                  className="mt-2 w-full text-sm text-red-300 underline decoration-red-300/60 underline-offset-2 hover:text-red-200"
+                >
+                  Report owner
+                </button>
               </div>
             </div>
           ))
@@ -355,6 +418,116 @@ const AllPropertiesCards = ({ loggedIn }) => {
           </p>
         )}
       </div>
+
+      {reportingProperty && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closeReportForm();
+          }}
+        >
+          <form
+            onSubmit={handleReportSubmit}
+            className="w-full max-w-lg space-y-4 rounded-xl border border-gray-700 bg-gray-900 p-6 text-white shadow-2xl"
+            aria-labelledby="report-owner-title"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 id="report-owner-title" className="text-xl font-bold text-red-300">
+                  Report owner
+                </h3>
+                <p className="mt-1 text-sm text-gray-400">
+                  Property: {reportingProperty.propertyAddress}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeReportForm}
+                disabled={isSubmittingReport}
+                aria-label="Close report form"
+                className="text-gray-400 hover:text-white disabled:opacity-50"
+              >
+                ✕
+              </button>
+            </div>
+
+            <fieldset>
+              <legend className="mb-2 text-sm font-medium text-gray-200">
+                Reason for report
+              </legend>
+              <div className="space-y-2">
+                {[
+                  { value: "scam", label: "Scam" },
+                  { value: "fake post", label: "Fake post" },
+                ].map((reason) => (
+                  <label
+                    key={reason.value}
+                    className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm hover:border-red-400"
+                  >
+                    <input
+                      type="radio"
+                      name="reportReason"
+                      value={reason.value}
+                      checked={reportReason === reason.value}
+                      onChange={(event) => setReportReason(event.target.value)}
+                      required
+                      className="accent-red-500"
+                    />
+                    <span>{reason.label}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            <label className="block text-sm font-medium text-gray-200">
+              Description
+              <textarea
+                value={reportDescription}
+                onChange={(event) => setReportDescription(event.target.value)}
+                required
+                minLength={1}
+                maxLength={2000}
+                rows={4}
+                placeholder="Describe why you are reporting this owner or property."
+                className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-red-400 focus:outline-none"
+              />
+            </label>
+
+            <label className="block text-sm font-medium text-gray-200">
+              Your phone number
+              <input
+                type="text"
+                inputMode="tel"
+                value={reportPhone}
+                onChange={(event) => setReportPhone(event.target.value)}
+                required
+                maxLength={30}
+                autoComplete="tel"
+                placeholder="Phone number admin can use to contact you"
+                className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:border-red-400 focus:outline-none"
+              />
+            </label>
+
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={closeReportForm}
+                disabled={isSubmittingReport}
+                className="rounded-lg border border-gray-600 px-4 py-2 hover:bg-gray-800 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmittingReport || !reportReason}
+                className="rounded-lg bg-red-600 px-4 py-2 font-semibold hover:bg-red-700 disabled:cursor-wait disabled:opacity-50"
+              >
+                {isSubmittingReport ? "Submitting..." : "Submit report"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Booking Modal */}
       {showModal && selectedProperty && (
