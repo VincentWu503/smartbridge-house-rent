@@ -13,6 +13,8 @@ const Home = () => {
   const [user, setUser] = useState(null);
 
     const handleLogOut = () => {
+          document.cookie =
+      "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     window.location.reload();
@@ -20,7 +22,6 @@ const Home = () => {
 
   useEffect(() => {
     const user = localStorage.getItem("user")
-    console.log(user);
     if (user) {
       setUser(JSON.parse(user));
     }

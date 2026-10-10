@@ -22,7 +22,7 @@ const OwnerHome = () => {
     document.cookie =
       "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     localStorage.removeItem("user");
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -30,7 +30,7 @@ const OwnerHome = () => {
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-black/30 backdrop-blur-lg shadow-md border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          <h2 className="text-3xl font-extrabold text-indigo-400 tracking-wide">RentEase</h2>
+          <h2 className="text-3xl font-extrabold text-indigo-400 tracking-wide">ComfyRent</h2>
           <div className="flex items-center gap-6">
             <h5 className="font-medium text-gray-300">
               Hi {user.userData.name}

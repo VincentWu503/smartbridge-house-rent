@@ -247,24 +247,13 @@ const AllPropertiesCards = ({ loggedIn }) => {
                   <p className="text-center mt-2 text-red-400 text-xs">Not Available</p>
                 )}
                 {property.isAvailable === "Available" ? (
-                  loggedIn ? (
+
                     <button
                       onClick={() => openModal(property)}
                       className="mt-3 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
                     >
                       Get Info / Book
                     </button>
-                  ) : (
-                    <button
-                      onClick={() => openModal(property)}
-                      disabled
-                      className="mt-3 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition
-                        disabled:bg-gray-600 disabled:cursor-not-allowed disabled:pointer-events-none
-                      "
-                    >
-                      Login to see details
-                    </button>
-                  )
                 ) : (
                     <button
                       onClick={() => openModal(property)}
@@ -307,13 +296,13 @@ const AllPropertiesCards = ({ loggedIn }) => {
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
               <div>
                 <p>
-                  <b>Owner Contact:</b> {selectedProperty.ownerContact}
+                  <b>Owner Contact:</b> {loggedIn ? (selectedProperty.ownerContact) : ('Please login to see owner contact info.')}
                 </p>
                 <p>
                   <b>Availability:</b> {selectedProperty.isAvailable}
                 </p>
                 <p>
-                  <b>Price:</b> ₹{selectedProperty.propertyAmt}
+                  <b>Price:</b> Rp{selectedProperty.propertyAmt}
                 </p>
               </div>
               <div>
@@ -362,12 +351,24 @@ const AllPropertiesCards = ({ loggedIn }) => {
                   setUserDetails({ ...userDetails, phone: e.target.value })
                 }
               />
-              <button
-                type="submit"
-                className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
-              >
-                Book Property
-              </button>
+
+              {loggedIn ? (
+                <button
+                  type="submit"
+                  className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+                  >
+                    Book Property
+                </button>
+                ):
+              (                <button
+                  type="submit"
+                  disabled
+                  className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition
+                            disabled:bg-gray-600 disabled:cursor-not-allowed disabled:pointer-events-none"
+                  >
+                    Please login to book
+                </button>)  
+            }              
             </form>
           </div>
         </div>

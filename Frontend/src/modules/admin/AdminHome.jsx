@@ -12,6 +12,8 @@ const AdminHome = () => {
   const [activeTab, setActiveTab] = useState("users");
 
   const handleLogOut = () => {
+        document.cookie =
+      "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/login");
