@@ -1,10 +1,10 @@
 const editableFields = [
-  "propertyType",
-  "propertyAdType",
-  "propertyAddress",
-  "ownerContact",
-  "additionalInfo",
-  "isAvailable",
+  'propertyType',
+  'propertyAdType',
+  'propertyAddress',
+  'ownerContact',
+  'additionalInfo',
+  'isAvailable',
 ];
 
 const buildPropertyUpdate = (req, property) => {
@@ -20,7 +20,7 @@ const buildPropertyUpdate = (req, property) => {
   if (body.propertyAmt !== undefined) {
     const amount = Number(body.propertyAmt);
     if (!Number.isFinite(amount) || amount < 0) {
-      const error = new Error("Price must be a valid non-negative number.");
+      const error = new Error('Price must be a valid non-negative number.');
       error.statusCode = 400;
       throw error;
     }
@@ -29,9 +29,9 @@ const buildPropertyUpdate = (req, property) => {
 
   if (
     updates.isAvailable !== undefined &&
-    !["Available", "Unavailable"].includes(updates.isAvailable)
+    !['Available', 'Unavailable'].includes(updates.isAvailable)
   ) {
-    const error = new Error("Availability must be Available or Unavailable.");
+    const error = new Error('Availability must be Available or Unavailable.');
     error.statusCode = 400;
     throw error;
   }

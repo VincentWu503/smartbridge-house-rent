@@ -1,33 +1,33 @@
-const express = require("express");
+const express = require('express');
 const {
   adminMiddleware,
   authMiddleware,
   optionalAuthMiddleware,
-} = require("../middlewares/authMiddleware");
+} = require('../middlewares/authMiddleware');
 const {
   createReportController,
   getAllReportsController,
   getReportController,
   updateReportStatusController,
   deleteReportController,
-} = require("../controllers/reportController");
+} = require('../controllers/reportController');
 
 const router = express.Router();
 
-router.get("/", authMiddleware, adminMiddleware, getAllReportsController);
-router.post("/", optionalAuthMiddleware, createReportController);
-router.get("/:reportId", authMiddleware, adminMiddleware, getReportController);
+router.get('/', authMiddleware, adminMiddleware, getAllReportsController);
+router.post('/', optionalAuthMiddleware, createReportController);
+router.get('/:reportId', authMiddleware, adminMiddleware, getReportController);
 router.patch(
-  "/:reportId",
+  '/:reportId',
   authMiddleware,
   adminMiddleware,
-  updateReportStatusController
+  updateReportStatusController,
 );
 router.delete(
-  "/:reportId",
+  '/:reportId',
   authMiddleware,
   adminMiddleware,
-  deleteReportController
+  deleteReportController,
 );
 
 module.exports = router;

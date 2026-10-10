@@ -1,14 +1,21 @@
-const express = require("express");
-const multer = require("multer");
-const { authMiddleware } = require("../middlewares/authMiddleware");
-const { getOwnerStatusController, addPropertyController, getAllOwnerPropertiesController, handleAllBookingstatusController, deletePropertyController, updatePropertyController, getAllBookingsController } = require("../controllers/ownerController");
-
+const express = require('express');
+const multer = require('multer');
+const { authMiddleware } = require('../middlewares/authMiddleware');
+const {
+  getOwnerStatusController,
+  addPropertyController,
+  getAllOwnerPropertiesController,
+  handleAllBookingstatusController,
+  deletePropertyController,
+  updatePropertyController,
+  getAllBookingsController,
+} = require('../controllers/ownerController');
 
 const router = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./uploads/");
+    cb(null, './uploads/');
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -16,32 +23,40 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-router.get("/status", getOwnerStatusController);
+router.get('/status', getOwnerStatusController);
 
 router.post(
-  "/postproperty",
-  upload.array("propertyImages"),
+  '/postproperty',
+  upload.array('propertyImages'),
   authMiddleware,
-  addPropertyController
+  addPropertyController,
 );
 
-router.get("/getallproperties", authMiddleware, getAllOwnerPropertiesController);
+router.get(
+  '/getallproperties',
+  authMiddleware,
+  getAllOwnerPropertiesController,
+);
 
-router.get("/getallbookings", authMiddleware, getAllBookingsController);
+router.get('/getallbookings', authMiddleware, getAllBookingsController);
 
-router.post("/handlebookingstatus", authMiddleware, handleAllBookingstatusController);
+router.post(
+  '/handlebookingstatus',
+  authMiddleware,
+  handleAllBookingstatusController,
+);
 
 router.delete(
-  "/deleteproperty/:propertyid",
+  '/deleteproperty/:propertyid',
   authMiddleware,
-  deletePropertyController
+  deletePropertyController,
 );
 
 router.patch(
-  "/updateproperty/:propertyid",
-  upload.single("propertyImage"),
+  '/updateproperty/:propertyid',
+  upload.single('propertyImage'),
   authMiddleware,
-  updatePropertyController
+  updatePropertyController,
 );
 
 module.exports = router;

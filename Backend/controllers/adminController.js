@@ -1,7 +1,7 @@
-const userSchema = require("../models/UserSchema");
-const propertySchema = require("../models/PropertySchema");
-const bookingSchema = require("../models/BookingSchema");
-const { buildPropertyUpdate } = require("../utils/propertyUpdate");
+const userSchema = require('../models/UserSchema');
+const propertySchema = require('../models/PropertySchema');
+const bookingSchema = require('../models/BookingSchema');
+const { buildPropertyUpdate } = require('../utils/propertyUpdate');
 
 /////////getting all users///////////////
 const getAllUsersController = async (req, res) => {
@@ -10,17 +10,17 @@ const getAllUsersController = async (req, res) => {
     if (!allUsers) {
       return res.status(401).send({
         success: false,
-        message: "No users presents",
+        message: 'No users presents',
       });
     } else {
       return res.status(200).send({
         success: true,
-        message: "All users",
+        message: 'All users',
         data: allUsers,
       });
     }
   } catch (error) {
-    console.log("Error in get All Users Controller ", error);
+    console.log('Error in get All Users Controller ', error);
   }
 };
 
@@ -31,14 +31,14 @@ const handleStatusController = async (req, res) => {
     const user = await userSchema.findByIdAndUpdate(
       userid,
       { granted: status },
-      { new: true }
+      { new: true },
     );
     return res.status(200).send({
       success: true,
       message: `User has been ${status}`,
     });
   } catch (error) {
-    console.log("Error in get All Users Controller ", error);
+    console.log('Error in get All Users Controller ', error);
   }
 };
 
@@ -49,17 +49,17 @@ const getAllPropertiesController = async (req, res) => {
     if (!allProperties) {
       return res.status(401).send({
         success: false,
-        message: "No properties presents",
+        message: 'No properties presents',
       });
     } else {
       return res.status(200).send({
         success: true,
-        message: "All properties",
+        message: 'All properties',
         data: allProperties,
       });
     }
   } catch (error) {
-    console.log("Error in get All Users Controller ", error);
+    console.log('Error in get All Users Controller ', error);
   }
 };
 
@@ -72,7 +72,7 @@ const getAllBookingsController = async (req, res) => {
       data: allBookings,
     });
   } catch (error) {
-    console.log("Error in get All Users Controller ", error);
+    console.log('Error in get All Users Controller ', error);
   }
 };
 
@@ -82,7 +82,7 @@ const updatePropertyController = async (req, res) => {
     if (!property) {
       return res.status(404).json({
         success: false,
-        message: "Property not found.",
+        message: 'Property not found.',
       });
     }
 
@@ -90,13 +90,13 @@ const updatePropertyController = async (req, res) => {
     await property.save();
     return res.status(200).json({
       success: true,
-      message: "Property updated successfully.",
+      message: 'Property updated successfully.',
     });
   } catch (error) {
-    console.error("Error updating property as admin:", error);
+    console.error('Error updating property as admin:', error);
     return res.status(error.statusCode || 500).json({
       success: false,
-      message: error.message || "Failed to update property.",
+      message: error.message || 'Failed to update property.',
     });
   }
 };

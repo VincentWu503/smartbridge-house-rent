@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const userSchema = require("../models/UserSchema");
+const jwt = require('jsonwebtoken');
+const userSchema = require('../models/UserSchema');
 
 const authMiddleware = async (req, res, next) => {
   try {
@@ -8,14 +8,14 @@ const authMiddleware = async (req, res, next) => {
     if (!token) {
       return res
         .status(401)
-        .send({ message: "No token found in cookies", success: false });
+        .send({ message: 'No token found in cookies', success: false });
     }
 
     jwt.verify(token, process.env.JWT_KEY, (err, decode) => {
       if (err) {
         return res
           .status(401)
-          .send({ message: "Token is not valid", success: false });
+          .send({ message: 'Token is not valid', success: false });
       } else {
         req.body = req.body || {};
         req.body.userId = decode.id;
@@ -24,8 +24,8 @@ const authMiddleware = async (req, res, next) => {
       }
     });
   } catch (error) {
-    console.error(error); 
-    res.status(500).send({ message: "Internal server error", success: false });
+    console.error(error);
+    res.status(500).send({ message: 'Internal server error', success: false });
   }
 };
 
@@ -43,7 +43,7 @@ const optionalAuthMiddleware = (req, res, next) => {
   } catch (error) {
     return res
       .status(401)
-      .send({ message: "Token is not valid", success: false });
+      .send({ message: 'Token is not valid', success: false });
   }
 };
 
@@ -52,22 +52,27 @@ const adminMiddleware = async (req, res, next) => {
     if (!req.authenticatedUserId) {
       return res
         .status(401)
-        .send({ success: false, message: "Authentication required" });
+        .send({ success: false, message: 'Authentication required' });
     }
 
     const user = await userSchema.findById(req.authenticatedUserId);
-    if (!user || String(user.type || "").trim().toLowerCase() !== "admin") {
+    if (
+      !user ||
+      String(user.type || '')
+        .trim()
+        .toLowerCase() !== 'admin'
+    ) {
       return res
         .status(403)
-        .send({ success: false, message: "Admin access required" });
+        .send({ success: false, message: 'Admin access required' });
     }
 
     return next();
   } catch (error) {
-    console.error("Error checking admin access:", error);
+    console.error('Error checking admin access:', error);
     return res
       .status(500)
-      .send({ success: false, message: "Unable to verify admin access" });
+      .send({ success: false, message: 'Unable to verify admin access' });
   }
 };
 
