@@ -5,7 +5,7 @@ const reportModel = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
-      default: null,
+      default: [true, "Please provide the reporter's ID"],
     },
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,

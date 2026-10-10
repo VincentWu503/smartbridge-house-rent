@@ -1,6 +1,7 @@
 const userSchema = require("../models/UserSchema");
 const propertySchema = require("../models/PropertySchema");
 const bookingSchema = require("../models/BookingSchema");
+const { buildPropertyUpdate } = require("../utils/propertyUpdate");
 
 //////////adding property by owner////////
 const addPropertyController = async (req, res) => {
@@ -77,16 +78,29 @@ const deletePropertyController = async (req, res) => {
 //////updating the property/////////////
 const updatePropertyController = async (req, res) => {
   const { propertyid } = req.params;
-  console.log(req.body);
   try {
-    const property = await propertySchema.findByIdAndUpdate(
-      { _id: propertyid },
-      {
-        ...req.body,
-        ownerId: req.body.userId,
-      },
-      { new: true }
-    );
+    const property = await propertySchema.findById(propertyid);
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found.",
+      });
+    }
+    if (String(property.ownerId) !== String(req.authenticatedUserId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only update your own properties.",
+      });
+    }
+
+    Object.assign(property, buildPropertyUpdate(req, property));
+    if (req.file) {
+      property.propertyImage = [{
+        filename: req.file.filename,
+        path: `/uploads/${req.file.filename}`,
+      }];
+    }
+    await property.save();
 
     return res.status(200).send({
       success: true,
@@ -94,9 +108,9 @@ const updatePropertyController = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating property:", error);
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       success: false,
-      message: "Failed to update property.",
+      message: error.message || "Failed to update property.",
     });
   }
 };

@@ -29,6 +29,7 @@ const bookingModel = mongoose.Schema(
   },
   {
     strict: false,
+    timestamps: true
   }
 );
 

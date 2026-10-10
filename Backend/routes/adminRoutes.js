@@ -1,6 +1,6 @@
 const express = require("express");
-const { authMiddleware } = require("../middlewares/authMiddleware");
-const { getAllUsersController, handleStatusController, getAllPropertiesController, getAllBookingsController } = require("../controllers/adminController");
+const { authMiddleware, adminMiddleware } = require("../middlewares/authMiddleware");
+const { getAllUsersController, handleStatusController, getAllPropertiesController, getAllBookingsController, updatePropertyController } = require("../controllers/adminController");
 
 
 const router = express.Router()
@@ -12,5 +12,12 @@ router.post('/handlestatus', authMiddleware, handleStatusController)
 router.get('/getallproperties', authMiddleware, getAllPropertiesController)
 
 router.get('/getallbookings', authMiddleware, getAllBookingsController)
+
+router.patch(
+  "/updateproperty/:propertyid",
+  authMiddleware,
+  adminMiddleware,
+  updatePropertyController
+);
 
 module.exports = router

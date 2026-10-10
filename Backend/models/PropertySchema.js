@@ -33,9 +33,10 @@ const propertyModel = mongoose.Schema({
    },
    ownerName: {
       type: String,
-   }
+   },
 },{
    strict: false,
+   timestamps: true
 })
 
 const propertySchema = mongoose.model('propertyschema', propertyModel)

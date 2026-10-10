@@ -2,9 +2,11 @@ import { message } from "antd";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom"
+import { formatRupiah } from "../propertyDisplay";
 
 const OwnerAllProperties = () => {
   const [image, setImage] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [editingPropertyId, setEditingPropertyId] = useState(null);
   const [editingPropertyData, setEditingPropertyData] = useState({
     propertyType: "",
@@ -18,11 +20,15 @@ const OwnerAllProperties = () => {
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setImage(null);
+  };
 
   const handleShow = (property) => {
     setEditingPropertyId(property._id);
     setEditingPropertyData(property);
+    setImage(null);
     setShow(true);
   };
 
@@ -54,8 +60,7 @@ const OwnerAllProperties = () => {
   }, []);
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
+    setImage(e.target.files?.[0] || null);
   };
 
   const handleChange = (e) => {
@@ -64,13 +69,23 @@ const OwnerAllProperties = () => {
   };
 
   const saveChanges = async (propertyId, status) => {
+    setIsSaving(true);
     try {
       const formData = new FormData();
-      Object.entries(editingPropertyData).forEach(([key, value]) =>
-        formData.append(key, value)
-      );
-      if (image) formData.append("propertyImage", image);
-      formData.append("isAvailable", status);
+      [
+        "propertyType",
+        "propertyAdType",
+        "propertyAddress",
+        "ownerContact",
+        "propertyAmt",
+        "additionalInfo",
+      ].forEach((key) => {
+        formData.append(key, editingPropertyData[key] ?? "");
+      });
+      if (image) {
+        formData.append("propertyImage", image);
+      }
+      formData.append("isAvailable", status || editingPropertyData.isAvailable);
 
       const res = await axios.patch(
         `${import.meta.env.VITE_API_URL}/api/owner/updateproperty/${propertyId}`,
@@ -95,6 +110,8 @@ const OwnerAllProperties = () => {
       } else {
         message.error("Failed to save changes");
       }
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -154,7 +171,7 @@ const OwnerAllProperties = () => {
             <td className="px-4 py-3 text-center">{property.propertyAdType}</td>
             <td className="px-4 py-3 text-center">{property.propertyAddress}</td>
             <td className="px-4 py-3 text-center">{property.ownerContact}</td>
-            <td className="px-4 py-3 text-center">₹{property.propertyAmt}</td>
+            <td className="px-4 py-3 text-center">{formatRupiah(property.propertyAmt)}</td>
             <td
               className={`px-4 py-3 text-center font-semibold ${
                 property.isAvailable === "Available"
@@ -186,8 +203,8 @@ const OwnerAllProperties = () => {
 
   {/* Edit Modal */}
   {show && (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50">
-      <div className="bg-gray-900/90 border border-gray-700 text-white w-full max-w-xl p-6 rounded-xl shadow-2xl">
+    <div className="fixed top-40 inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50">
+      <div className="bg-gray-900/90 border border-gray-700 text-white w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 rounded-xl shadow-2xl">
         <h3 className="text-2xl font-bold mb-6 text-indigo-400">Edit Property</h3>
         <form
           onSubmit={(e) => {
@@ -228,14 +245,21 @@ const OwnerAllProperties = () => {
             placeholder="Owner Contact"
             className="border border-gray-700 bg-gray-800/70 text-white px-3 py-2 w-full rounded-lg focus:ring-2 focus:ring-indigo-500 placeholder-gray-400"
           />
-          <input
-            type="number"
-            name="propertyAmt"
-            value={editingPropertyData.propertyAmt}
-            onChange={handleChange}
-            placeholder="Property Amount"
-            className="border border-gray-700 bg-gray-800/70 text-white px-3 py-2 w-full rounded-lg focus:ring-2 focus:ring-indigo-500 placeholder-gray-400"
-          />
+          <label className="block text-sm font-medium text-gray-300">
+            Price (IDR / Rp)
+            <input
+              type="number"
+              name="propertyAmt"
+              min="0"
+              step="1"
+              required
+              inputMode="numeric"
+              value={editingPropertyData.propertyAmt ?? ""}
+              onChange={handleChange}
+              placeholder="e.g. 2500000"
+              className="mt-1 border border-gray-700 bg-gray-800/70 text-white px-3 py-2 w-full rounded-lg focus:ring-2 focus:ring-indigo-500 placeholder-gray-400"
+            />
+          </label>
           <textarea
             name="additionalInfo"
             value={editingPropertyData.additionalInfo}
@@ -243,26 +267,34 @@ const OwnerAllProperties = () => {
             placeholder="Additional Info"
             className="border border-gray-700 bg-gray-800/70 text-white px-3 py-2 w-full rounded-lg focus:ring-2 focus:ring-indigo-500 placeholder-gray-400"
           />
+          <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Replace Property Image
+          </label>
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
             className="border border-gray-700 bg-gray-800/70 text-white px-3 py-2 w-full rounded-lg cursor-pointer file:mr-3 file:px-3 file:py-1 file:rounded-md file:border-0 file:bg-indigo-600 file:text-white hover:file:bg-indigo-700"
           />
+          {image && <p className="mt-1 text-xs text-gray-400">Selected: {image.name}</p>}
+          </div>
 
           <div className="flex justify-end gap-3 mt-4">
             <button
               type="button"
               onClick={handleClose}
+              disabled={isSaving}
               className="px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-700/50 transition"
             >
-              Cancel
+              Close
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-lg"
+              disabled={isSaving}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-lg disabled:cursor-wait disabled:opacity-60"
             >
-              Save Changes
+              {isSaving ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>
@@ -275,4 +307,3 @@ const OwnerAllProperties = () => {
 };
 
 export default OwnerAllProperties;
-

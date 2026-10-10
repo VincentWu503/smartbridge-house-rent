@@ -1,6 +1,11 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Toast from "../common/Toast";
+import {
+  formatPropertyDate,
+  formatRupiah,
+  getPropertyImages,
+} from "./propertyDisplay";
 
 const getStoredFavorites = () => {
   try {
@@ -24,6 +29,8 @@ const AllPropertiesCards = ({ loggedIn }) => {
   const [favoriteIds, setFavoriteIds] = useState(getStoredFavorites);
   const [showModal, setShowModal] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [cardImageIndexes, setCardImageIndexes] = useState({});
   const [userDetails, setUserDetails] = useState({ fullName: "", phone: "" });
   const [toast, setToast] = useState({ show: false, type: "", message: "" });
 
@@ -124,7 +131,30 @@ const AllPropertiesCards = ({ loggedIn }) => {
 
   const openModal = (property) => {
     setSelectedProperty(property);
+    setSelectedImageIndex(0);
     setShowModal(true);
+  };
+  const selectedImages = getPropertyImages(selectedProperty?.propertyImage);
+  const activeModalImageIndex = selectedImages.length
+    ? selectedImageIndex % selectedImages.length
+    : 0;
+  const selectedImage = selectedImages[activeModalImageIndex];
+
+  const changeCardImage = (propertyId, imageCount, direction) => {
+    setCardImageIndexes((indexes) => {
+      const currentIndex = indexes[propertyId] || 0;
+      return {
+        ...indexes,
+        [propertyId]: (currentIndex + direction + imageCount) % imageCount,
+      };
+    });
+  };
+
+  const changeModalImage = (direction) => {
+    if (!selectedImages.length) return;
+    setSelectedImageIndex(
+      (index) => (index + direction + selectedImages.length) % selectedImages.length
+    );
   };
 
   return (
@@ -208,6 +238,52 @@ const AllPropertiesCards = ({ loggedIn }) => {
               key={property._id}
               className="relative bg-gray-800/70 border border-gray-700 rounded-lg shadow-lg hover:shadow-indigo-600/40 transition transform hover:-translate-y-1 overflow-hidden"
             >
+              {(() => {
+                const images = getPropertyImages(property.propertyImage);
+                const imageIndex = images.length
+                  ? (cardImageIndexes[property._id] || 0) % images.length
+                  : 0;
+                const image = images[imageIndex];
+
+                return (
+                  <div className="relative">
+                    {image ? (
+                      <img
+                        src={`${import.meta.env.VITE_API_URL}${image.path}`}
+                        alt={`${property.propertyAddress || "Property"} image ${imageIndex + 1}`}
+                        className="w-full h-40 object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-40 flex items-center justify-center bg-gray-900 text-gray-400">
+                        No property image
+                      </div>
+                    )}
+                    {images.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => changeCardImage(property._id, images.length, -1)}
+                          aria-label={`Previous image for ${property.propertyAddress || "property"}`}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-xl text-white hover:bg-black"
+                        >
+                          ‹
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => changeCardImage(property._id, images.length, 1)}
+                          aria-label={`Next image for ${property.propertyAddress || "property"}`}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-xl text-white hover:bg-black"
+                        >
+                          ›
+                        </button>
+                        <span className="absolute bottom-2 right-2 rounded bg-black/70 px-2 py-1 text-xs text-white">
+                          {imageIndex + 1} / {images.length}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                );
+              })()}
               <button
                 type="button"
                 onClick={() => toggleFavorite(property._id)}
@@ -225,22 +301,25 @@ const AllPropertiesCards = ({ loggedIn }) => {
               >
                 {favoriteIds.includes(String(property._id)) ? "★" : "✰"}
               </button>
-              <img
-                src={`${import.meta.env.VITE_API_URL}${property.propertyImage[0]?.path}`}
-                alt="Property"
-                className="w-full h-40 object-cover"
-              />
               <div className="p-4">
                 <h3 className="font-semibold text-lg text-white">{property.propertyAddress}</h3>
                 <p className="text-gray-400 text-sm">
                   {property.propertyType} - {property.propertyAdType}
                 </p>
                 <p className="mt-2 text-sm">
-                  <b>Price:</b> Rp{property.propertyAmt}
+                  <b>Price:</b> {formatRupiah(property.propertyAmt)}
                 </p>
                 <p className="text-sm">
                   <b>Owner:</b> {property.ownerName}
                 </p>
+                <div className="mt-3 space-y-1 border-t border-gray-700 pt-3 text-xs text-gray-400">
+                  <p>
+                    <b>Posted:</b> {formatPropertyDate(property.createdAt, property._id)}
+                  </p>
+                  <p>
+                    <b>Last updated:</b> {formatPropertyDate(property.updatedAt)}
+                  </p>
+                </div>
                 {property.isAvailable === "Available" ? (
                   <p className="text-center mt-2 text-green-400 text-xs">Available</p>
                 ) : (
@@ -280,19 +359,52 @@ const AllPropertiesCards = ({ loggedIn }) => {
       {/* Booking Modal */}
       {showModal && selectedProperty && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50 backdrop-blur-sm">
-          <div className="bg-gray-900 p-6 rounded-lg w-full max-w-2xl relative border border-gray-700 shadow-xl">
+          <div className="bg-gray-900 p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border border-gray-700 shadow-xl">
             <button
               onClick={() => setShowModal(false)}
+              type="button"
+              aria-label="Close property information"
               className="absolute top-3 right-3 text-gray-400 hover:text-white"
             >
               ✖
             </button>
             <h3 className="text-xl font-bold mb-4 text-white">Property Info</h3>
-            <img
-              src={`${import.meta.env.VITE_API_URL}${selectedProperty.propertyImage[0]?.path}`}
-              alt="Property"
-              className="w-full h-48 object-cover rounded mb-4"
-            />
+            <div className="relative mb-4">
+              {selectedImage ? (
+                <img
+                  src={`${import.meta.env.VITE_API_URL}${selectedImage.path}`}
+                  alt={`${selectedProperty.propertyAddress || "Property"} image ${selectedImageIndex + 1}`}
+                  className="w-full h-64 object-cover rounded"
+                />
+              ) : (
+                <div className="h-64 flex items-center justify-center rounded bg-gray-800 text-gray-400">
+                  No property images available
+                </div>
+              )}
+              {selectedImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => changeModalImage(-1)}
+                    aria-label="Previous property image"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-2 text-white hover:bg-black"
+                  >
+                  ‹
+                  </button>
+                  <button
+                  type="button"
+                  onClick={() => changeModalImage(1)}
+                    aria-label="Next property image"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-2 text-white hover:bg-black"
+                  >
+                  ›
+                  </button>
+                  <span className="absolute bottom-3 right-3 rounded bg-black/70 px-2 py-1 text-xs text-white">
+                  {activeModalImageIndex + 1} / {selectedImages.length}
+                  </span>
+                </>
+              )}
+            </div>
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
               <div>
                 <p>
@@ -302,7 +414,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
                   <b>Availability:</b> {selectedProperty.isAvailable}
                 </p>
                 <p>
-                  <b>Price:</b> Rp{selectedProperty.propertyAmt}
+                  <b>Price:</b> {formatRupiah(selectedProperty.propertyAmt)}
                 </p>
               </div>
               <div>
@@ -320,6 +432,14 @@ const AllPropertiesCards = ({ loggedIn }) => {
             <p className="mt-2 text-sm text-gray-300">
               <b>Additional Info:</b> {selectedProperty.additionalInfo}
             </p>
+            <div className="mt-3 space-y-1 border-t border-gray-700 pt-3 text-xs text-gray-400">
+              <p>
+                <b>Posted:</b> {formatPropertyDate(selectedProperty.createdAt, selectedProperty._id)}
+              </p>
+              <p>
+                <b>Last updated:</b> {formatPropertyDate(selectedProperty.updatedAt)}
+              </p>
+            </div>
 
             {/* Booking Form */}
             <form

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { message } from "antd";
 import {useNavigate} from "react-router-dom"
+import { formatRupiah } from "../propertyDisplay";
 
 axios.defaults.withCredentials = true; 
 
@@ -26,39 +27,28 @@ function AddProperty() {
     setPropertyDetails((prev) => ({ ...prev, [name]: value }));
   };
 
-  useEffect(() => {
-    setPropertyDetails((prev) => ({
-      ...prev,
-      propertyImages: image,
-    }));
-  }, [image]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("propertyType", propertyDetails.propertyType);
-    formData.append("propertyAdType", propertyDetails.propertyAdType);
-    formData.append("propertyAddress", propertyDetails.propertyAddress);
-    formData.append("ownerContact", propertyDetails.ownerContact);
-    formData.append("propertyAmt", propertyDetails.propertyAmt);
-    formData.append("additionalInfo", propertyDetails.additionalInfo);
-
+    Object.entries(propertyDetails).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
     if (image) {
-      for (let i = 0; i < image.length; i++) {
-        formData.append("propertyImages", image[i]);
+      for (let index = 0; index < image.length; index += 1) {
+        formData.append("propertyImages", image[index]);
       }
     }
 
     try {
-      const res = await axios.post(
+      const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/owner/postproperty`,
         formData,
         { withCredentials: true }
       );
 
-      if (res.data.success) {
-        message.success(res.data.message);
+      if (response.data.success) {
+        message.success(response.data.message);
         setPropertyDetails({
           propertyType: "residential",
           propertyAdType: "rent",
@@ -69,7 +59,7 @@ function AddProperty() {
         });
         setImage(null);
       } else {
-        message.error(res.data.message || "Unauthorized access");
+        message.error(response.data.message || "Unauthorized access");
         navigate("/login");
       }
     } catch (error) {
@@ -81,7 +71,7 @@ function AddProperty() {
         message.error("Failed to add property");
       }
     }
-  };;
+  };
 
   return (
  <div className="max-w-5xl mx-auto bg-gray-900/80 border border-gray-700 backdrop-blur-md shadow-2xl rounded-xl p-8 mt-12 text-white">
@@ -174,17 +164,23 @@ function AddProperty() {
 
       <div>
         <label className="block font-medium mb-2 text-gray-300">
-          Property Amount
+          Price (IDR / Rp)
         </label>
         <input
           type="number"
           name="propertyAmt"
+          min="0"
+          step="1"
+          inputMode="numeric"
           value={propertyDetails.propertyAmt}
           onChange={handleChange}
-          placeholder="Amount"
+          placeholder="e.g. 2500000"
           required
           className="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-400"
         />
+        <p className="mt-1 text-xs text-gray-400">
+          Enter rupiah without a currency symbol. Preview: {formatRupiah(propertyDetails.propertyAmt)}
+        </p>
       </div>
     </div>
 

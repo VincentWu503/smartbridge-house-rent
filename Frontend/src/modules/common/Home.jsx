@@ -37,6 +37,12 @@ const Home = () => {
   const goToSlide = (index) => {
     setCurrentIndex(index);
   };
+  const goToPreviousSlide = () => {
+    setCurrentIndex((index) => (index - 1 + images.length) % images.length);
+  };
+  const goToNextSlide = () => {
+    setCurrentIndex((index) => (index + 1) % images.length);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-800 via-gray-900 to-black">
@@ -74,17 +80,40 @@ const Home = () => {
       </nav>
 
       {/* Hero Section */}
-      <div className="relative w-full h-[70vh] mt-16 overflow-hidden">
+      <div
+        className="relative w-full h-[70vh] mt-16 overflow-hidden"
+        role="region"
+        aria-label="Featured properties"
+        aria-roledescription="carousel"
+      >
         {images.map((img, idx) => (
           <div
             key={idx}
+            aria-hidden={currentIndex !== idx}
             className={`absolute w-full h-full transition-opacity duration-1000 ${currentIndex === idx ? "opacity-100" : "opacity-0"
               }`}
           >
-            <img src={img} alt={`Slide ${idx}`} className="w-full h-full object-cover" />
+            <img src={img} alt={`Featured property ${idx + 1}`} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
           </div>
         ))}
+
+        <button
+          type="button"
+          onClick={goToPreviousSlide}
+          aria-label="Previous featured property"
+          className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 px-4 py-2 text-3xl leading-none text-white hover:bg-black/80"
+        >
+          ‹
+        </button>
+        <button
+          type="button"
+          onClick={goToNextSlide}
+          aria-label="Next featured property"
+          className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 px-4 py-2 text-3xl leading-none text-white hover:bg-black/80"
+        >
+          ›
+        </button>
 
         {/* Center Text */}
         <div className="absolute bottom-20 w-full text-center text-white px-4">
@@ -102,6 +131,8 @@ const Home = () => {
             <button
               key={idx}
               onClick={() => goToSlide(idx)}
+              aria-label={`Show featured property ${idx + 1}`}
+              aria-current={currentIndex === idx ? "true" : undefined}
               className={`w-4 h-4 rounded-full transition-all duration-300 ${currentIndex === idx
                   ? "bg-indigo-400 scale-125 shadow-lg"
                   : "bg-gray-400 hover:bg-indigo-300"
