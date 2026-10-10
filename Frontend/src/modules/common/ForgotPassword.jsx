@@ -82,7 +82,7 @@ const ForgotPassword = () => {
                </Link>
                <Link
                  to="/register"
-                 className="text-black bg-indigo-400 px-4 py-2 rounded-lg shadow hover:bg-indigo-500 transition"
+                 className="text-white bg-indigo-400 px-4 py-2 rounded-lg shadow hover:bg-indigo-500 transition"
                >
                  Register
                </Link>

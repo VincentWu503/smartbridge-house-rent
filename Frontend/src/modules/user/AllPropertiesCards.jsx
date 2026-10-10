@@ -273,8 +273,8 @@ const AllPropertiesCards = ({ loggedIn }) => {
           aria-pressed={showFavoritesOnly}
           className={`px-4 py-2 rounded transition ${
             showFavoritesOnly
-              ? "bg-yellow-600 text-white"
-              : "border border-yellow-400 text-yellow-300 hover:bg-yellow-600 hover:text-white"
+              ? "bg-yellow-400 text-white"
+              : "border border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-white"
           }`}
         >
           {showFavoritesOnly ? "Show All Properties" : `Favorites (${favoriteIds.length})`}
@@ -317,7 +317,6 @@ const AllPropertiesCards = ({ loggedIn }) => {
                           aria-label={`Previous image for ${property.propertyAddress || "property"}`}
                           className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-xl text-white hover:bg-black"
                         >
-                          ‹
                         </button>
                         <button
                           type="button"
@@ -325,7 +324,6 @@ const AllPropertiesCards = ({ loggedIn }) => {
                           aria-label={`Next image for ${property.propertyAddress || "property"}`}
                           className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-1 text-xl text-white hover:bg-black"
                         >
-                          ›
                         </button>
                         <span className="absolute bottom-2 right-2 rounded bg-black/70 px-2 py-1 text-xs text-white">
                           {imageIndex + 1} / {images.length}
@@ -346,8 +344,8 @@ const AllPropertiesCards = ({ loggedIn }) => {
                 aria-pressed={favoriteIds.includes(String(property._id))}
                 className={`absolute top-3 right-3 z-10 aspect-square rounded-full bg-black/70 px-2 py-1 text-2xl leading-none transition ${
                   favoriteIds.includes(String(property._id))
-                    ? "text-yellow-400"
-                    : "text-white hover:text-yellow-300"
+                    ? "text-yellow-200"
+                    : "text-white hover:text-yellow-100"
                 }`}
               >
                 {favoriteIds.includes(String(property._id)) ? "★" : "✰"}

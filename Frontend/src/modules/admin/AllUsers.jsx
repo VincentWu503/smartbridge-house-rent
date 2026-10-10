@@ -87,7 +87,7 @@ const AllUsers = () => {
           <tr
             key={user._id}
             className={`transition duration-200 ${
-              index % 2 === 0 ? "bg-gray-800/60" : "bg-gray-900/60"
+              index % 2 === 0 ? "bg-gray-800/60" : "bg-gray-300/60"
             } hover:bg-indigo-500/20`}
           >
             <td className="py-2 px-4 border-b border-gray-700 text-gray-200">

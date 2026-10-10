@@ -161,10 +161,12 @@ const OwnerAllProperties = () => {
         </tr>
       </thead>
       <tbody>
-        {allProperties.map((property) => (
+        {allProperties.map((property, index) => (
           <tr
             key={property._id}
-            className="border-b border-gray-700 hover:bg-gray-800/60 transition duration-200"
+            className={`border-b border-gray-700 transition duration-200 ${
+              index % 2 === 0 ? "bg-gray-800/60" : "bg-gray-300/60"
+            } hover:bg-indigo-500/20`}
           >
             <td className="px-4 py-3">{property._id}</td>
             <td className="px-4 py-3 text-center">{property.propertyType}</td>

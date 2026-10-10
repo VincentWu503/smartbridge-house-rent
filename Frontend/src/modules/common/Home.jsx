@@ -62,7 +62,7 @@ const Home = () => {
             </Link>
             <Link
               to="/register"
-              className="text-black bg-indigo-400 px-4 py-2 rounded-lg shadow hover:bg-indigo-500 transition"
+              className="text-white bg-indigo-400 px-4 py-2 rounded-lg shadow hover:bg-indigo-500 transition"
             >
               Register
             </Link>
@@ -116,7 +116,7 @@ const Home = () => {
         </button>
 
         {/* Center Text */}
-        <div className="absolute bottom-20 w-full text-center text-white px-4">
+        <div className="home-hero-copy absolute bottom-20 w-full text-center text-white px-4">
           <h1 className="text-4xl md:text-5xl font-extrabold drop-shadow-lg mb-4 animate-fadeIn">
             Find Your Dream Rental Property
           </h1>

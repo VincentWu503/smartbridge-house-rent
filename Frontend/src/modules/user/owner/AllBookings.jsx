@@ -74,9 +74,9 @@ const OwnerAllBookings = () => {
         allBookings.map((booking, idx) => (
           <tr
             key={booking._id}
-            className={`border-b border-gray-700 transition duration-200 hover:bg-gray-800/50 ${
-              idx % 2 === 0 ? "bg-gray-800/40" : "bg-gray-900/40"
-            }`}
+            className={`border-b border-gray-700 transition duration-200 ${
+              idx % 2 === 0 ? "bg-gray-800/60" : "bg-gray-300/60"
+            } hover:bg-indigo-500/20`}
           >
             <td className="py-3 px-4">{booking._id}</td>
             <td className="py-3 px-4 text-center">{booking.propertyId}</td>

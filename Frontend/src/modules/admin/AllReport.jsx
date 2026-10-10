@@ -172,7 +172,7 @@ const AllReport = () => {
                   <tr
                     key={report._id}
                     className={`transition hover:bg-indigo-500/20 ${
-                      index % 2 === 0 ? "bg-gray-800/60" : "bg-gray-900/60"
+                      index % 2 === 0 ? "bg-gray-800/60" : "bg-gray-300/60"
                     }`}
                   >
                     <td className="max-w-xs break-all border-b border-gray-700 px-4 py-3 text-gray-200">
