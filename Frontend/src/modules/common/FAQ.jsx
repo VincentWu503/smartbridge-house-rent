@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const adminWhatsAppNumber = "6289999999999";
@@ -123,44 +124,83 @@ const renterFaqs = [
   },
 ];
 
-const FaqSection = ({ title, description, questions }) => (
-  <section className="mt-10 first:mt-0" aria-labelledby={`${title}-heading`}>
-    <div className="mb-4">
-      <h2 id={`${title}-heading`} className="text-2xl font-bold text-slate-900">
-        {title}
-      </h2>
-      <p className="mt-1 text-sm text-slate-600">{description}</p>
-    </div>
-    <div className="space-y-3">
-      {questions.map(({ question, answer }) => (
-        <details
-          key={question}
-          className="group rounded-xl border border-slate-200 bg-white shadow-sm transition open:border-indigo-200 open:shadow-md"
-        >
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-800 marker:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 [&::-webkit-details-marker]:hidden">
-            <span>{question}</span>
-            <span
-              aria-hidden="true"
-              className="shrink-0 text-xl text-indigo-600 transition-transform group-open:rotate-45"
-            >
-              +
-            </span>
-          </summary>
-          <div className="border-t border-slate-100 px-5 py-4 text-sm leading-7 text-slate-600">
-            {answer}
-          </div>
-        </details>
-      ))}
-    </div>
-  </section>
-);
+const FaqSection = ({ title, description, questions }) => {
+  const [openQuestion, setOpenQuestion] = useState(null);
 
-const FAQ = () => (
-  <div className="min-h-screen bg-gradient-to-br from-gray-800 via-gray-900 to-black">
+  return (
+    <section className="mt-10 first:mt-0" aria-labelledby={`${title}-heading`}>
+      <div className="mb-4">
+        <h2 id={`${title}-heading`} className="text-2xl font-bold text-slate-900">
+          {title}
+        </h2>
+        <p className="mt-1 text-sm text-slate-600">{description}</p>
+      </div>
+      <div className="space-y-3">
+        {questions.map(({ question, answer }, index) => {
+          const isOpen = openQuestion === index;
+          const panelId = `${title.toLowerCase().replaceAll(" ", "-")}-answer-${index}`;
+
+          return (
+            <div
+              key={question}
+              className={`rounded-xl border bg-white shadow-sm transition-colors ${
+                isOpen
+                  ? "border-indigo-200 shadow-md"
+                  : "border-slate-200"
+              }`}
+            >
+              <button
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls={panelId}
+                onClick={() => setOpenQuestion(isOpen ? null : index)}
+                className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-xl px-5 py-4 text-left font-semibold text-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <span>{question}</span>
+                <span
+                  aria-hidden="true"
+                  className={`shrink-0 text-xl text-indigo-600 transition-transform duration-300 ease-in-out ${
+                    isOpen ? "rotate-90" : ""
+                  }`}
+                >
+                  &gt;
+                </span>
+              </button>
+                <div
+                  id={panelId}
+                  aria-hidden={!isOpen}
+                  inert={!isOpen}
+                  className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out ${
+                    isOpen
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                <div className="min-h-0 overflow-hidden">
+                  <div className="border-t border-slate-100 px-5 py-4 text-sm leading-7 text-slate-600">
+                    {answer}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+};
+
+const FAQ = () => {
+  const [questionFor, setQuestionFor] = useState("All");
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-800 via-gray-900 to-black">
     <main className="mx-auto w-full max-w-7xl px-6 py-10 sm:py-14">
       <Link
         to="/"
-        className="mb-5 inline-flex items-center gap-2 rounded-lg border border-indigo-200 bg-white px-4 py-2 font-semibold text-indigo-700 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        className="mb-5 inline-flex items-center gap-2 rounded-lg border border-indigo-200 bg-white px-4 py-2 
+        font-semibold text-indigo-700 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-50 focus-visible:outline-2 
+        focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
         <span aria-hidden="true">←</span>
         Back to home
@@ -171,7 +211,7 @@ const FAQ = () => (
           ComfyRent support
         </p>
         <h1 className="mt-2 text-4xl font-bold text-slate-900 sm:text-5xl">
-          Frequently asked questions
+          Frequently Asked Questions
         </h1>
         <p className="mt-3 max-w-3xl leading-7 text-slate-600">
           Find answers about owner verification, property listings, bookings, and
@@ -197,16 +237,43 @@ const FAQ = () => (
         </div>
       </header>
 
-      <FaqSection
-        title="Owner FAQ"
-        description="Information about verification and publishing your property."
-        questions={ownerFaqs}
-      />
-      <FaqSection
-        title="Renter FAQ"
-        description="Tips for evaluating listings and managing your booking."
-        questions={renterFaqs}
-      />
+      <div className="mb-6 flex flex-col gap-4">
+        <h2 className="mt-2 text-2xl font-bold text-white">
+          Filter FAQs by Type
+        </h2>
+        <div className="flex flex-wrap gap-3" aria-label="FAQ type filter">
+          {["All", "Owner", "Renter"].map((type) => (
+            <button
+              key={type}
+              type="button"
+              aria-pressed={questionFor === type}
+              onClick={() => setQuestionFor(type)}
+              className={`rounded-lg border px-6 py-2 font-semibold shadow-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-300 ${
+                questionFor === type
+                  ? "border-indigo-500 bg-indigo-600 text-white"
+                  : "border-indigo-200 bg-white text-indigo-700 hover:border-indigo-300 hover:bg-indigo-50"
+              }`}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {(questionFor === "All" || questionFor === "Owner") && (
+        <FaqSection
+          title="Owner FAQ"
+          description="Information about verification and publishing your property."
+          questions={ownerFaqs}
+        />
+      )}
+      {(questionFor === "All" || questionFor === "Renter") && (
+        <FaqSection
+          title="Renter FAQ"
+          description="Tips for evaluating listings and managing your booking."
+          questions={renterFaqs}
+        />
+      )}
       <div className="mt-10 border-t border-slate-200 pt-6">
         <Link
           to="/"
@@ -217,7 +284,8 @@ const FAQ = () => (
         </Link>
       </div>
     </main>
-  </div>
-);
+    </div>
+  );
+};
 
 export default FAQ;
