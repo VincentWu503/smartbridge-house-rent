@@ -3,6 +3,7 @@ import Home from "./modules/common/Home";
 import Login from "./modules/common/Login";
 import Register from "./modules/common/Register";
 import ForgotPassword from "./modules/common/ForgotPassword";
+import FAQ from "./modules/common/FAQ";
 import AdminHome from "./modules/admin/AdminHome";
 import OwnerHome from "./modules/user/owner/OwnerHome";
 import RenterHome from "./modules/user/renter/RenterHome";
@@ -44,6 +45,7 @@ function App() {
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/forgotpassword' element={<ForgotPassword />} />
+          <Route path='/faq' element={<FAQ />} />
           <Route path='/adminhome' element={<AdminHome />} />
           <Route path='/ownerhome' element={<OwnerHome />} />
           <Route path='/renterhome' element={<RenterHome />} />

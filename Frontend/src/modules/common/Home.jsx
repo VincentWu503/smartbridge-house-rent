@@ -53,9 +53,12 @@ const Home = () => {
         </h2>
         {       
           !user ? 
-          <div className="space-x-8 text-lg">
+          <div className="flex items-center gap-4 text-sm sm:gap-8 sm:text-lg">
             <Link to="/" className="text-gray-200 hover:text-indigo-400 transition">
               Home
+            </Link>
+            <Link to="/faq" className="text-gray-200 hover:text-indigo-400 transition">
+              FAQ
             </Link>
             <Link to="/login" className="text-gray-200 hover:text-indigo-400 transition">
               Login
@@ -69,6 +72,12 @@ const Home = () => {
           </div> :
     <div className="flex items-center space-x-6">
       <span className="text-gray-200">Hi, {user.name}</span>
+      <Link to="/" className="text-gray-200 hover:text-indigo-400 transition">
+        Home
+      </Link>
+      <Link to="/faq" className="text-gray-200 hover:text-indigo-400 transition">
+        FAQ
+      </Link>
       <button
         onClick={handleLogOut}
         className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-md"
@@ -102,22 +111,22 @@ const Home = () => {
           type="button"
           onClick={goToPreviousSlide}
           aria-label="Previous featured property"
-          className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 px-4 py-2 text-3xl leading-none text-white hover:bg-black/80"
-        >
-          ‹
+          className="flex items-center justify-center absolute left-4 top-1/2 z-10 h-12 w-12 -translate-y-1/2 rounded-full bg-black/60 px-4 py-2 text-3xl leading-none text-white hover:bg-black/80"
+        > 
+          <span className="pb-[25%]" >&lt;</span>
         </button>
         <button
           type="button"
           onClick={goToNextSlide}
           aria-label="Next featured property"
-          className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 px-4 py-2 text-3xl leading-none text-white hover:bg-black/80"
-        >
-          ›
+          className="flex items-center justify-center absolute right-4 top-1/2 z-10 h-12 w-12 -translate-y-1/2 rounded-full bg-black/60 px-4 py-2 text-3xl leading-none text-white hover:bg-black/80"
+        > 
+          <span className="pb-[25%]">&gt;</span>
         </button>
 
         {/* Center Text */}
         <div className="home-hero-copy absolute bottom-20 w-full text-center text-white px-4">
-          <h1 className="text-4xl md:text-5xl font-extrabold drop-shadow-lg mb-4 animate-fadeIn">
+          <h1 className="text-4xl md:text-5xl font-extrabold drop-shadow-lg mb-4 animate-fadeIn text-gray-200">
             Find Your Dream Rental Property
           </h1>
           <p className="text-lg md:text-xl font-light drop-shadow-md text-gray-200">

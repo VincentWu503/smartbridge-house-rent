@@ -1,10 +1,11 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../App";
 import AllUsers from "./AllUsers";
 import AllProperty from "./AllProperty";
 import AllBookings from "./AllBookings";
 import AllReport from "./AllReport";
+import { Link } from "react-router-dom";
 
 const AdminHome = () => {
   const user = useContext(UserContext);
@@ -27,6 +28,9 @@ if (!user || !user.userData) return null;
   <nav className="fixed top-0 left-0 w-full z-50 bg-black/30 backdrop-blur-lg shadow-md py-4 px-8 flex justify-between items-center">
     <h2 className="text-3xl font-extrabold text-indigo-400 tracking-wide">ComfyRent</h2>
     <div className="flex items-center space-x-6">
+      <Link to="/faq" className="text-gray-200 transition hover:text-indigo-400">
+        FAQ
+      </Link>
       <span className="text-gray-200">Hi, {user.userData.name}</span>
       <button
         onClick={handleLogOut}

@@ -73,9 +73,12 @@ const ForgotPassword = () => {
              <h2 className="text-3xl font-extrabold text-indigo-400 tracking-wide">
                ComfyRent
              </h2>
-             <div className="space-x-8 text-lg">
+             <div className="flex items-center gap-4 text-sm sm:gap-8 sm:text-lg">
                <Link to="/" className="text-gray-200 hover:text-indigo-400 transition">
                  Home
+               </Link>
+               <Link to="/faq" className="text-gray-200 hover:text-indigo-400 transition">
+                 FAQ
                </Link>
                <Link to="/login" className="text-gray-200 hover:text-indigo-400 transition">
                  Login
@@ -151,4 +154,3 @@ const ForgotPassword = () => {
 };
 
 export default ForgotPassword;
-

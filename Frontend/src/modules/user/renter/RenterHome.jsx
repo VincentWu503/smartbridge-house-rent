@@ -21,6 +21,9 @@ const RenterHome = () => {
       <nav className="bg-black/30 backdrop-blur-lg shadow-md px-6 py-4 flex items-center justify-between">
         <h2 className="text-3xl font-extrabold text-indigo-400 tracking-wide">ComfyRent</h2>
         <div className="flex items-center gap-6">
+          <Link to="/faq" className="text-gray-200 transition hover:text-indigo-400">
+            FAQ
+          </Link>
           <h5 className="font-medium text-gray-200">
             Hi, {user.userData.name}
           </h5>
