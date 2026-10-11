@@ -19,7 +19,7 @@ const registerController = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     req.body.password = hashedPassword;
 
-    if (req.body.type === 'Owner') {
+    if (String(req.body.type).trim().toLowerCase() === 'owner') {
       granted = 'ungranted';
       const newUser = new userSchema({ ...req.body, granted });
       await newUser.save();
@@ -55,7 +55,7 @@ const loginController = async (req, res) => {
         .send({ message: 'Invalid email or password', success: false });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, {
+    const token = jwt.sign({ id: user._id, type: user.type }, process.env.JWT_KEY, {
       expiresIn: '1d',
     });
 

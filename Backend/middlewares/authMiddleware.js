@@ -59,7 +59,9 @@ const ownerMiddleware = async (req, res, next) => {
     const role = String(user.type || '')
       .trim()
       .toLowerCase();
-    if (!user || role !== 'owner' || role !== 'admin') {
+
+    const userOrAdmin = role === "owner" || role === "admin" ? true : false
+    if (!user || !userOrAdmin) {
       return res
         .status(403)
         .send({ success: false, message: 'Admin access required' });
