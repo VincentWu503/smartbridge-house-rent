@@ -170,7 +170,7 @@ const AdminAllProperty = () => {
         </tbody>
       </table>
       {editingProperty && (
-        <div className="fixed top-[45%] translate-y-[-50%] z-[60] inset-0 z-50 flex items-center justify-center">
+        <div className="fixed top-[50%] z-[60] inset-0 z-50 flex items-center justify-center">
           <form
             onSubmit={saveProperty}
             className="max-h-[90vh] w-full max-w-3xl space-y-3 overflow-y-auto rounded-xl border border-gray-700 bg-gray-900 p-5 text-white shadow-2xl"
