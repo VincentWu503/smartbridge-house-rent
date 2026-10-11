@@ -13,13 +13,33 @@ const {
 
 const router = express.Router();
 
-router.get('/getallusers', authMiddleware, getAllUsersController);
+router.get(
+  '/getallusers',
+  authMiddleware,
+  adminMiddleware,
+  getAllUsersController,
+);
 
-router.post('/handlestatus', authMiddleware, handleStatusController);
+router.post(
+  '/handlestatus',
+  authMiddleware,
+  adminMiddleware,
+  handleStatusController,
+);
 
-router.get('/getallproperties', authMiddleware, getAllPropertiesController);
+router.get(
+  '/getallproperties',
+  authMiddleware,
+  adminMiddleware,
+  getAllPropertiesController,
+);
 
-router.get('/getallbookings', authMiddleware, getAllBookingsController);
+router.get(
+  '/getallbookings',
+  authMiddleware,
+  adminMiddleware,
+  getAllBookingsController,
+);
 
 router.patch(
   '/updateproperty/:propertyid',

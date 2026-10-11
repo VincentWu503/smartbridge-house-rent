@@ -47,6 +47,33 @@ const optionalAuthMiddleware = (req, res, next) => {
   }
 };
 
+const ownerMiddleware = async (req, res, next) => {
+  try {
+    if (!req.authenticatedUserId) {
+      return res
+        .status(401)
+        .send({ success: false, message: 'Authentication required' });
+    }
+
+    const user = await userSchema.findById(req.authenticatedUserId);
+    const role = String(user.type || '')
+      .trim()
+      .toLowerCase();
+    if (!user || role !== 'owner' || role !== 'admin') {
+      return res
+        .status(403)
+        .send({ success: false, message: 'Admin access required' });
+    }
+
+    return next();
+  } catch (error) {
+    console.error('Error checking admin access:', error);
+    return res
+      .status(500)
+      .send({ success: false, message: 'Unable to verify admin access' });
+  }
+};
+
 const adminMiddleware = async (req, res, next) => {
   try {
     if (!req.authenticatedUserId) {

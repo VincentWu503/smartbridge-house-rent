@@ -1,6 +1,9 @@
 const express = require('express');
 const multer = require('multer');
-const { authMiddleware } = require('../middlewares/authMiddleware');
+const {
+  authMiddleware,
+  ownerMiddleware,
+} = require('../middlewares/authMiddleware');
 const {
   getOwnerStatusController,
   addPropertyController,
@@ -23,18 +26,21 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+// public info so dont protect this route
 router.get('/status', getOwnerStatusController);
 
 router.post(
   '/postproperty',
   upload.array('propertyImages'),
   authMiddleware,
+  ownerMiddleware,
   addPropertyController,
 );
 
 router.get(
   '/getallproperties',
   authMiddleware,
+  ownerMiddleware,
   getAllOwnerPropertiesController,
 );
 
@@ -43,12 +49,14 @@ router.get('/getallbookings', authMiddleware, getAllBookingsController);
 router.post(
   '/handlebookingstatus',
   authMiddleware,
+  ownerMiddleware,
   handleAllBookingstatusController,
 );
 
 router.delete(
   '/deleteproperty/:propertyid',
   authMiddleware,
+  ownerMiddleware,
   deletePropertyController,
 );
 
@@ -56,6 +64,7 @@ router.patch(
   '/updateproperty/:propertyid',
   upload.single('propertyImage'),
   authMiddleware,
+  ownerMiddleware,
   updatePropertyController,
 );
 
