@@ -14,8 +14,8 @@ const Toast = ({ type, message, onClose }) => {
       className={`fixed top-5 right-5 z-[9999] flex items-center gap-3 px-5 py-3 rounded-lg shadow-xl border backdrop-blur-md animate-slideIn
     ${
       type === 'success'
-        ? 'bg-green-500/20 border-green-500/40 text-green-300'
-        : 'bg-red-500/20 border-red-500/40 text-red-300'
+        ? 'bg-green-500 border-green-500/40 text-white-300'
+        : 'bg-red-500 border-red-500/40 text-white-300'
     }`}
     >
       {isSuccess ? (
@@ -23,7 +23,7 @@ const Toast = ({ type, message, onClose }) => {
       ) : (
         <XCircleIcon className="h-6 w-6 flex-shrink-0" />
       )}
-      <span className="font-medium">{message}</span>
+      <span className="font-medium text-white">{message}</span>
 
       {/* Close Button */}
       <button
