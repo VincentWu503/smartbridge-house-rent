@@ -203,7 +203,7 @@ const AllReport = () => {
                           handleStatusChange(report._id, event.target.value)
                         }
                         disabled={isProcessing}
-                        className="rounded-md border border-gray-600 bg-gray-800 px-2 py-1 text-gray-100 disabled:opacity-60"
+                        className="rounded-md border border-gray-600 bg-gray-800 px-2 py-1 disabled:opacity-60"
                       >
                         <option value="in progress">In progress</option>
                         <option value="settled">Settled</option>

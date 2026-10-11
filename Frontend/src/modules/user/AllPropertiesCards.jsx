@@ -510,6 +510,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
                 )}
                 <button
                   type="button"
+                  disabled={!loggedIn}
                   onClick={() => {
                     setReportingProperty(property);
                     setReportReason('');
@@ -518,7 +519,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
                   }}
                   className="mt-2 w-full text-sm text-red-300 underline decoration-red-300/60 underline-offset-2 hover:text-red-200"
                 >
-                  Report owner
+                  {loggedIn ? 'Fake or scam? report here' : 'Login to report'}
                 </button>
               </div>
             </div>
@@ -635,7 +636,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
               </button>
               <button
                 type="submit"
-                disabled={isSubmittingReport || !reportReason}
+                disabled={isSubmittingReport || !reportReason || !loggedIn}
                 className="text-white rounded-lg bg-red-600 px-4 py-2 font-semibold hover:bg-red-700 disabled:cursor-wait disabled:opacity-50"
               >
                 {isSubmittingReport ? 'Submitting...' : 'Submit report'}

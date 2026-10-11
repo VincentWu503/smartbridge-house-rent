@@ -106,7 +106,7 @@ const AdminAllProperty = () => {
       <table className="min-w-full border border-gray-700 bg-gray-900/80 backdrop-blur-md shadow-2xl rounded-xl overflow-hidden">
         <thead className="bg-indigo-600/80 text-white">
           <tr>
-            <th className="py-3 px-4 text-left">Property ID</th>
+            <th className="py-3 px-4 text-left">Owner Name</th>
             <th className="py-3 px-4 text-center">Owner ID</th>
             <th className="py-3 px-4 text-center">Property Type</th>
             <th className="py-3 px-4 text-center">Property Ad Type</th>
@@ -126,7 +126,7 @@ const AdminAllProperty = () => {
                 } hover:bg-indigo-500/20`}
               >
                 <td className="py-2 px-4 border-b border-gray-700 text-gray-200">
-                  {property._id}
+                  {property.ownerName}
                 </td>
                 <td className="py-2 px-4 border-b border-gray-700 text-center text-gray-300">
                   {property.ownerId}
@@ -170,10 +170,10 @@ const AdminAllProperty = () => {
         </tbody>
       </table>
       {editingProperty && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+        <div className="fixed top-[25vh] inset-0 z-50 flex items-center justify-center">
           <form
             onSubmit={saveProperty}
-            className="max-h-[90vh] w-full max-w-2xl space-y-4 overflow-y-auto rounded-xl border border-gray-700 bg-gray-900 p-6 text-white shadow-2xl"
+            className="max-h-[90vh] w-full max-w-3xl space-y-3 overflow-y-auto rounded-xl border border-gray-700 bg-gray-900 p-5 text-white shadow-2xl"
           >
             <div className="flex items-center justify-between">
               <h3 className="text-2xl font-bold text-indigo-400">
@@ -188,43 +188,65 @@ const AdminAllProperty = () => {
                 ✕
               </button>
             </div>
-            {[
-              ['propertyType', 'Property Type'],
-              ['propertyAdType', 'Ad Type'],
-              ['propertyAddress', 'Address'],
-              ['ownerContact', 'Owner Contact'],
-            ].map(([name, label]) => (
-              <label
-                key={name}
-                className="block text-sm font-medium text-gray-300"
-              >
-                {label}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {[
+                ['propertyType', 'Property Type'],
+                ['propertyAdType', 'Ad Type'],
+              ].map(([name, label]) => (
+                <label
+                  key={name}
+                  className="block text-sm font-medium text-gray-300"
+                >
+                  {label}
+                  <input
+                    type="text"
+                    name={name}
+                    value={editingProperty[name] ?? ''}
+                    onChange={handleChange}
+                    required
+                    className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white"
+                  />
+                </label>
+              ))}
+              <label className="block text-sm font-medium text-gray-300">
+                Owner Phone Number
                 <input
                   type="text"
-                  name={name}
-                  value={editingProperty[name] ?? ''}
+                  name="ownerContact"
+                  value={editingProperty.ownerContact ?? ''}
                   onChange={handleChange}
                   required
                   className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white"
                 />
               </label>
-            ))}
-            <label className="block text-sm font-medium text-gray-300">
-              Price (IDR / Rp)
+              <label className="block text-sm font-medium text-gray-300">
+                Price (IDR / Rp)
+                <input
+                  type="number"
+                  name="propertyAmt"
+                  min="0"
+                  step="1"
+                  inputMode="numeric"
+                  value={editingProperty.propertyAmt ?? ''}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white"
+                />
+                <span className="mt-1 block text-xs text-gray-400">
+                  Preview: {formatRupiah(editingProperty.propertyAmt)}
+                </span>
+              </label>
+            </div>
+            <label className="block text-sm font-medium text-gray-300 sm:col-span-2">
+              Address
               <input
-                type="number"
-                name="propertyAmt"
-                min="0"
-                step="1"
-                inputMode="numeric"
-                value={editingProperty.propertyAmt ?? ''}
+                type="text"
+                name="propertyAddress"
+                value={editingProperty.propertyAddress ?? ''}
                 onChange={handleChange}
                 required
                 className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white"
               />
-              <span className="mt-1 block text-xs text-gray-400">
-                Preview: {formatRupiah(editingProperty.propertyAmt)}
-              </span>
             </label>
             <label className="block text-sm font-medium text-gray-300">
               Additional Details
@@ -253,14 +275,14 @@ const AdminAllProperty = () => {
                 type="button"
                 onClick={closeEdit}
                 disabled={isSaving}
-                className="rounded-lg border border-gray-600 px-4 py-2 hover:bg-gray-800 disabled:opacity-60"
+                className="rounded-lg border border-gray-600 px-4 py-2 hover:bg-gray-300 disabled:opacity-60"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-60"
+                className="text-white rounded-lg bg-indigo-600 px-4 py-2 font-semibold hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-60"
               >
                 {isSaving ? 'Saving and uploading...' : 'Save Changes'}
               </button>

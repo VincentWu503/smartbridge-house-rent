@@ -214,7 +214,7 @@ const OwnerAllProperties = () => {
 
       {/* Edit Modal */}
       {show && (
-        <div className="fixed top-40 inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50">
+        <div className="fixed top-40 inset-0 flex items-center justify-center">
           <div className="bg-gray-900/90 border border-gray-700 text-white w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 rounded-xl shadow-2xl">
             <h3 className="text-2xl font-bold mb-6 text-indigo-400">
               Edit Property
