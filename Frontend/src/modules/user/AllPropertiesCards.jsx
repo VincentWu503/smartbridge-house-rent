@@ -535,7 +535,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
 
       {reportingProperty && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) closeReportForm();
           }}
@@ -648,7 +648,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
 
       {/* Booking Modal */}
       {showModal && selectedProperty && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50 backdrop-blur-sm">
+        <div className="fixed inset-0 flex items-center justify-center">
           <div className="bg-gray-900 p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border border-gray-700 shadow-xl">
             <button
               onClick={() => setShowModal(false)}
