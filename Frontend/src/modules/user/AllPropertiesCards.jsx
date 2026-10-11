@@ -648,7 +648,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
 
       {/* Booking Modal */}
       {showModal && selectedProperty && (
-        <div className="fixed inset-0 flex items-center justify-center">
+        <div className="fixed top-[45%] translate-y-[-50%] z-[60] inset-0 flex items-center justify-center">
           <div className="bg-gray-900 p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border border-gray-700 shadow-xl">
             <button
               onClick={() => setShowModal(false)}
@@ -659,12 +659,12 @@ const AllPropertiesCards = ({ loggedIn }) => {
               ✖
             </button>
             <h3 className="text-xl font-bold mb-4 text-white">Property Info</h3>
-            <div className="relative mb-4">
+            <div className="relative mb-4 al">
               {selectedImage ? (
                 <img
                   src={`${import.meta.env.VITE_API_URL}${selectedImage.path}`}
                   alt={`${selectedProperty.propertyAddress || 'Property'} image ${selectedImageIndex + 1}`}
-                  className="w-full h-64 object-cover rounded"
+                  className="w-100 h-58 object-cover rounded mx-auto"
                 />
               ) : (
                 <div className="h-64 flex items-center justify-center rounded bg-gray-800 text-gray-400">
@@ -679,7 +679,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
                     aria-label="Previous property image"
                     className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-2 text-white hover:bg-black"
                   >
-                    ‹
+                    &lt;
                   </button>
                   <button
                     type="button"
@@ -687,7 +687,7 @@ const AllPropertiesCards = ({ loggedIn }) => {
                     aria-label="Next property image"
                     className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-2 text-white hover:bg-black"
                   >
-                    ›
+                    &gt;
                   </button>
                   <span className="absolute bottom-3 right-3 rounded bg-black/70 px-2 py-1 text-xs text-white">
                     {activeModalImageIndex + 1} / {selectedImages.length}
